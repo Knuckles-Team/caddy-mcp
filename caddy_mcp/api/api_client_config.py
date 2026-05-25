@@ -1,5 +1,6 @@
 from caddy_mcp.api.api_client_base import ApiClientBase
 
+
 class Api(ApiClientBase):
     def get_config(self, path: str = "") -> dict:
         """Get Caddy configuration."""
@@ -15,7 +16,9 @@ class Api(ApiClientBase):
 
     def load_config(self, config_str: str, config_type: str = "json") -> dict:
         """Load a complete Caddy configuration."""
-        headers = {"Content-Type": "application/json" if config_type == "json" else "text/yaml"}
+        headers = {
+            "Content-Type": "application/json" if config_type == "json" else "text/yaml"
+        }
         return self.request("POST", "/load", data=config_str)
 
     def get_routes(self) -> dict:
