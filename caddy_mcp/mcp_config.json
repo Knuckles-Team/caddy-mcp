@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "caddy_mcp": {
+      "command": "python",
+      "args": [
+        "-m",
+        "caddy_mcp.mcp_server"
+      ],
+      "env": {}
+    }
+  }
+}

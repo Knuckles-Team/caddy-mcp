@@ -1,0 +1,11 @@
+services:
+  caddy-mcp:
+    build: .
+    environment:
+      - CADDY_URL
+      - CADDY_TOKEN
+      - TRANSPORT=streamable-http
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "8000:8000"
