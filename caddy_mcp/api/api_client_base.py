@@ -18,6 +18,7 @@ class ApiClientBase:
         self.token = token
         self.username = username
         self.password = password
+        self.last_etag: str | None = None
         self._session = requests.Session()
         self._session.verify = verify
 
@@ -35,20 +36,37 @@ class ApiClientBase:
         endpoint: str,
         params: dict[str, Any] | None = None,
         data: Any | None = None,
+        headers: dict[str, str] | None = None,
     ) -> Any:
         if endpoint.startswith("http"):
             url = endpoint
         else:
             url = urljoin(self.base_url, endpoint)
 
-        headers = {"Content-Type": "application/json"}
+        req_headers = {"Content-Type": "application/json"}
+        if headers:
+            req_headers.update(headers)
+
+        content_type = req_headers.get("Content-Type", "")
+        kwargs: dict[str, Any] = {}
+
+        if "application/json" in content_type:
+            if isinstance(data, str):
+                kwargs["data"] = data
+            else:
+                kwargs["json"] = data
+        else:
+            kwargs["data"] = data
+
         response = self._session.request(
             method=method,
             url=url,
-            headers=headers,
+            headers=req_headers,
             params=params,
-            json=data,
+            **kwargs,
         )
+
+        self.last_etag = response.headers.get("ETag")
 
         if response.status_code >= 400:
             raise Exception(f"API error: {response.status_code} - {response.text}")
