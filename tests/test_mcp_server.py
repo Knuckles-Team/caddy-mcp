@@ -1,11 +1,13 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock
 
 
 @pytest.mark.concept("CADDY-002")
 def test_mcp_server_registration():
     """CONCEPT:CADDY-002 Test that tools register successfully."""
     from caddy_mcp.mcp_server import get_mcp_instance
+
     res = get_mcp_instance()
     if isinstance(res, tuple):
         mcp = res[0]
@@ -21,6 +23,7 @@ def test_mcp_server_registration():
 def test_mcp_server_security_context():
     """CONCEPT:CADDY-003 Verify that the server registers with correct security credentials."""
     from caddy_mcp.auth import get_client
+
     client = get_client()
     assert client is not None
 
@@ -30,6 +33,7 @@ def test_mcp_server_security_context():
 async def test_mcp_tools_routing():
     """Verify that caddy_mcp_config, caddy_mcp_pki, and caddy_mcp_reverse_proxy tools are registered and route correctly."""
     from caddy_mcp.mcp_server import get_mcp_instance
+
     res = get_mcp_instance()
     mcp = res[0] if isinstance(res, tuple) else res
 
@@ -50,7 +54,7 @@ async def test_mcp_tools_routing():
         action="get_config",
         params_json='{"path": "apps"}',
         client=mock_client,
-        ctx=mock_ctx
+        ctx=mock_ctx,
     )
     mock_client.get_config.assert_called_once_with(path="apps")
 
@@ -60,7 +64,7 @@ async def test_mcp_tools_routing():
         action="get_pki_ca",
         params_json='{"ca_id": "local"}',
         client=mock_client,
-        ctx=mock_ctx
+        ctx=mock_ctx,
     )
     mock_client.get_pki_ca.assert_called_once_with(ca_id="local")
 
@@ -70,6 +74,6 @@ async def test_mcp_tools_routing():
         action="get_reverse_proxy_upstreams",
         params_json="{}",
         client=mock_client,
-        ctx=mock_ctx
+        ctx=mock_ctx,
     )
     mock_client.get_reverse_proxy_upstreams.assert_called_once()

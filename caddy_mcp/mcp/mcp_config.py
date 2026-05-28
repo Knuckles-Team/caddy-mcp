@@ -1,6 +1,7 @@
 """MCP tools for Caddy operations."""
 
 from typing import Any
+
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
 from pydantic import Field
@@ -24,7 +25,8 @@ def register_config_tools(mcp: FastMCP):
             )
         ),
         params_json: str = Field(
-            default="{}", description="JSON string of parameters matching the method signature."
+            default="{}",
+            description="JSON string of parameters matching the method signature.",
         ),
         client=Depends(get_client),
         ctx: Context | None = Field(default=None, description="MCP context"),
@@ -79,7 +81,8 @@ def register_config_tools(mcp: FastMCP):
             description="Action to perform. Must be one of: 'get_pki_ca', 'get_pki_ca_certificates'"
         ),
         params_json: str = Field(
-            default="{}", description="JSON string of parameters matching the method signature."
+            default="{}",
+            description="JSON string of parameters matching the method signature.",
         ),
         client=Depends(get_client),
         ctx: Context | None = Field(default=None, description="MCP context"),

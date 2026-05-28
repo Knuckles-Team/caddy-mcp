@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
+
 from caddy_mcp.api_client import Api
 
 
@@ -39,7 +41,10 @@ def test_api_client_full_endpoints():
         _, kwargs = mock_request.call_args
         assert kwargs["method"] == "POST"
         assert kwargs["url"] == "http://localhost:2019/load"
-        assert kwargs["headers"] == {"Content-Type": "application/json5", "Cache-Control": "must-revalidate"}
+        assert kwargs["headers"] == {
+            "Content-Type": "application/json5",
+            "Cache-Control": "must-revalidate",
+        }
         assert kwargs["json"] == {"apps": {}}
         assert client.last_etag == '"abc-123"'
 
@@ -62,7 +67,10 @@ def test_api_client_full_endpoints():
         _, kwargs = mock_request.call_args
         assert kwargs["method"] == "POST"
         assert kwargs["url"] == "http://localhost:2019/config/apps/http"
-        assert kwargs["headers"] == {"Content-Type": "application/json", "If-Match": '"abc-123"'}
+        assert kwargs["headers"] == {
+            "Content-Type": "application/json",
+            "If-Match": '"abc-123"',
+        }
         assert kwargs["json"] == {"server": "test"}
 
         # Test put_config

@@ -1,4 +1,5 @@
 """Main FastMCP server and tool registration."""
+
 import os
 import sys
 from typing import Any
@@ -14,6 +15,7 @@ from caddy_mcp.mcp.mcp_config import register_config_tools
 
 __version__ = "0.15.0"
 logger = get_logger(name="caddy_mcp")
+
 
 def get_mcp_instance() -> tuple[Any, ...]:
     load_dotenv(find_dotenv())
@@ -35,6 +37,7 @@ def get_mcp_instance() -> tuple[Any, ...]:
         mcp.add_middleware(mw)
     return mcp, args, middlewares
 
+
 def mcp_server() -> None:
     mcp, args, middlewares = get_mcp_instance()
     print(f"Caddy MCP MCP v{__version__}", file=sys.stderr)
@@ -44,6 +47,7 @@ def mcp_server() -> None:
         mcp.run(transport="streamable-http", host=args.host, port=args.port)
     else:
         mcp.run(transport="stdio")
+
 
 if __name__ == "__main__":
     mcp_server()

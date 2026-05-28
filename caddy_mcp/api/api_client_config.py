@@ -1,9 +1,12 @@
 from typing import Any
+
 from caddy_mcp.api.api_client_base import ApiClientBase
 
 
 class Api(ApiClientBase):
-    def load_config(self, config: Any, config_adapter: str | None = None, force_reload: bool = False) -> dict:
+    def load_config(
+        self, config: Any, config_adapter: str | None = None, force_reload: bool = False
+    ) -> dict:
         """Sets Caddy's configuration, overriding any previous configuration.
 
         Args:
