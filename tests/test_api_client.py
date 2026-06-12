@@ -162,3 +162,28 @@ def test_api_client_full_endpoints():
         assert kwargs["method"] == "GET"
         assert kwargs["url"] == "http://localhost:2019/reverse_proxy/upstreams"
         assert kwargs["headers"] == {"Content-Type": "application/json"}
+
+        # Test get_metrics
+        client.get_metrics()
+        _, kwargs = mock_request.call_args
+        assert kwargs["method"] == "GET"
+        assert kwargs["url"] == "http://localhost:2019/metrics"
+
+        # Test get_debug_vars
+        client.get_debug_vars()
+        _, kwargs = mock_request.call_args
+        assert kwargs["method"] == "GET"
+        assert kwargs["url"] == "http://localhost:2019/debug/vars"
+
+        # Test get_debug_pprof (index)
+        client.get_debug_pprof()
+        _, kwargs = mock_request.call_args
+        assert kwargs["method"] == "GET"
+        assert kwargs["url"] == "http://localhost:2019/debug/pprof/"
+
+        # Test get_debug_pprof (named profile with query params)
+        client.get_debug_pprof("heap", params={"debug": 1})
+        _, kwargs = mock_request.call_args
+        assert kwargs["method"] == "GET"
+        assert kwargs["url"] == "http://localhost:2019/debug/pprof/heap"
+        assert kwargs["params"] == {"debug": 1}

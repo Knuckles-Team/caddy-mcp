@@ -6,4 +6,4 @@ def test_startup():
     # Basic import test
     import caddy_mcp
 
-    assert caddy_mcp.__version__ == "0.15.0"
+    assert caddy_mcp.__version__ == "0.32.0"

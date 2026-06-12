@@ -133,3 +133,40 @@ def register_config_tools(mcp: FastMCP):
             return client.get_reverse_proxy_upstreams(**kwargs)
 
         raise ValueError(f"Unknown reverse proxy action: {action}")
+
+    @mcp.tool(tags={"debug"})
+    async def caddy_mcp_debug(
+        action: str = Field(
+            description=(
+                "Action to perform. Must be one of: "
+                "'get_metrics' (Prometheus exposition), 'get_debug_vars' (expvar), "
+                "'get_debug_pprof' (Go pprof profile; params: profile, params)"
+            )
+        ),
+        params_json: str = Field(
+            default="{}",
+            description="JSON string of parameters matching the method signature.",
+        ),
+        client=Depends(get_client),
+        ctx: Context | None = Field(default=None, description="MCP context"),
+    ) -> Any:
+        """Inspect Caddy observability and profiling endpoints (metrics, expvar, pprof)."""
+        if ctx:
+            await ctx.info(f"Executing debug operation '{action}'...")
+        import json
+
+        try:
+            kwargs = json.loads(params_json)
+        except Exception as e:
+            return {"error": f"Invalid params_json: {e}"}
+
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
+        if action == "get_metrics":
+            return client.get_metrics(**kwargs)
+        if action == "get_debug_vars":
+            return client.get_debug_vars(**kwargs)
+        if action == "get_debug_pprof":
+            return client.get_debug_pprof(**kwargs)
+
+        raise ValueError(f"Unknown debug action: {action}")

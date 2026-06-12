@@ -42,6 +42,7 @@ async def test_mcp_tools_routing():
     assert "caddy_mcp_config" in tools
     assert "caddy_mcp_pki" in tools
     assert "caddy_mcp_reverse_proxy" in tools
+    assert "caddy_mcp_debug" in tools
 
     # Mock client and context
     mock_client = MagicMock()
@@ -77,3 +78,22 @@ async def test_mcp_tools_routing():
         ctx=mock_ctx,
     )
     mock_client.get_reverse_proxy_upstreams.assert_called_once()
+
+    # Test caddy_mcp_debug action routing
+    debug_tool = tools["caddy_mcp_debug"]
+    await debug_tool.fn(
+        action="get_metrics",
+        params_json="{}",
+        client=mock_client,
+        ctx=mock_ctx,
+    )
+    mock_client.get_metrics.assert_called_once()
+    await debug_tool.fn(
+        action="get_debug_pprof",
+        params_json='{"profile": "heap", "params": {"debug": 1}}',
+        client=mock_client,
+        ctx=mock_ctx,
+    )
+    mock_client.get_debug_pprof.assert_called_once_with(
+        profile="heap", params={"debug": 1}
+    )

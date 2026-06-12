@@ -135,3 +135,30 @@ class Api(ApiClientBase):
     def get_routes(self) -> dict:
         """Retrieve Caddy route mappings."""
         return self.request("GET", "/config/apps/http/servers")
+
+    # Observability / debug endpoints (served on the admin endpoint by default).
+    def get_metrics(self) -> Any:
+        """Scrapes Caddy's Prometheus metrics from the admin endpoint (GET /metrics).
+
+        Returns the raw exposition text wrapped as ``{"status": "success", "text": ...}``.
+        """
+        return self.request("GET", "/metrics")
+
+    def get_debug_vars(self) -> Any:
+        """Returns the Go expvar variables published on the admin endpoint (GET /debug/vars)."""
+        return self.request("GET", "/debug/vars")
+
+    def get_debug_pprof(
+        self, profile: str = "", params: dict[str, Any] | None = None
+    ) -> Any:
+        """Fetches a Go pprof profile from the admin endpoint (GET /debug/pprof/<profile>).
+
+        Args:
+            profile: The pprof profile name, e.g. 'heap', 'goroutine', 'allocs', 'block',
+                'mutex', 'threadcreate', 'profile' (CPU), 'trace', 'cmdline', 'symbol'.
+                Empty (the default) returns the pprof index page.
+            params: Optional query parameters, e.g. ``{"debug": 1}`` for the human-readable
+                text format, or ``{"seconds": 30}`` for the CPU/trace profiles.
+        """
+        profile = profile.lstrip("/")
+        return self.request("GET", f"/debug/pprof/{profile}", params=params)
