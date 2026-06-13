@@ -829,14 +829,25 @@ Caddy Admin API capability:</p>
 <td><code>reverse_proxy</code></td>
 <td><code>get_reverse_proxy_upstreams</code></td>
 </tr>
+<tr>
+<td><code>caddy_mcp_debug</code></td>
+<td><code>debug</code></td>
+<td><code>get_metrics</code>, <code>get_debug_vars</code>, <code>get_debug_pprof</code></td>
+</tr>
 </tbody>
 </table>
+<p>Together these cover the full Caddy Admin API surface: configuration (<code>/load</code>, <code>/stop</code>,
+<code>/config/…</code>, <code>/id/…</code>, <code>/adapt</code>), PKI (<code>/pki/ca/…</code>), reverse-proxy upstream health
+(<code>/reverse_proxy/upstreams</code>), and the observability endpoints served on the admin
+endpoint by default (<code>/metrics</code>, <code>/debug/vars</code>, <code>/debug/pprof/…</code>).</p>
 <p>Each tool takes an <code>action</code> and a <code>params_json</code> string matching the underlying method
 signature. Example agent prompts that map onto these tools:</p>
 <ul>
 <li><em>"Export Caddy's current configuration"</em> → <code>caddy_mcp_config</code> with <code>get_config</code></li>
 <li><em>"Show the reverse-proxy upstream health"</em> → <code>caddy_mcp_reverse_proxy</code> with <code>get_reverse_proxy_upstreams</code></li>
 <li><em>"Return the local PKI CA certificate chain"</em> → <code>caddy_mcp_pki</code> with <code>get_pki_ca_certificates</code></li>
+<li><em>"Scrape Caddy's Prometheus metrics"</em> → <code>caddy_mcp_debug</code> with <code>get_metrics</code></li>
+<li><em>"Grab a heap profile in text form"</em> → <code>caddy_mcp_debug</code> with <code>get_debug_pprof</code> and <code>params_json='{"profile": "heap", "params": {"debug": 1}}'</code></li>
 </ul>
 <h2 id="as-a-python-api">As a Python API<a class="headerlink" href="#as-a-python-api" title="Permanent link">&para;</a></h2>
 <p><code>Api</code> (<code>caddy_mcp.api_client</code>) is a <code>requests</code>-based facade over the Caddy Admin API.
@@ -854,6 +865,11 @@ Build one directly, or from the environment with <code>get_client()</code>.</p>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">routes</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_routes</span><span class="p">()</span>                       <span class="c1"># http servers / routes</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">upstreams</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_reverse_proxy_upstreams</span><span class="p">()</span>   <span class="c1"># upstream health</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">ca</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_pki_ca</span><span class="p">(</span><span class="s2">&quot;local&quot;</span><span class="p">)</span>                    <span class="c1"># PKI app CA info</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># Observability (served on the admin endpoint by default)</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">metrics</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>                      <span class="c1"># Prometheus exposition text</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">expvars</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_debug_vars</span><span class="p">()</span>                   <span class="c1"># Go expvar JSON</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">heap</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_debug_pprof</span><span class="p">(</span><span class="s2">&quot;heap&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>  <span class="c1"># pprof profile</span>
 </span></code></pre></div>
 <p>Build a client straight from the environment:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">caddy_mcp.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_client</span>
