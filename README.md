@@ -124,9 +124,9 @@ The table below is auto-generated from the live server — do not edit by hand.
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `caddy_mcp_config` | `CONFIGTOOL` | Manage Caddy configuration and server control. |
-| `caddy_mcp_debug` | `DEBUGTOOL` | Inspect Caddy observability and profiling endpoints (metrics, expvar, pprof). |
-| `caddy_mcp_pki` | `PKITOOL` | Manage Caddy PKI app CAs and certificates. |
-| `caddy_mcp_reverse_proxy` | `REVERSE_PROXYTOOL` | Query Caddy reverse proxy upstream health and status. |
+| `caddy_mcp_debug` | `CONFIGTOOL` | Inspect Caddy observability and profiling endpoints (metrics, expvar, pprof). |
+| `caddy_mcp_pki` | `CONFIGTOOL` | Manage Caddy PKI app CAs and certificates. |
+| `caddy_mcp_reverse_proxy` | `CONFIGTOOL` | Query Caddy reverse proxy upstream health and status. |
 
 _4 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
