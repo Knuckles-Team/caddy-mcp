@@ -117,14 +117,19 @@ A local template is supplied inside [.env.example](.env.example). Copy this file
 
 ## MCP Tools
 
-The following declarative FastMCP tools are registered and available to upstream AI agents:
+The table below is auto-generated from the live server — do not edit by hand.
 
-| Tool Name | Description | Parameters |
-|-----------|-------------|------------|
-| `get_config` | Retrieve current Caddy configuration path | `path: str` |
-| `set_config` | Update Caddy configuration path with new json value | `path: str, data: dict` |
-| `delete_config` | Delete Caddy configuration path | `path: str` |
-| `load_config` | Load Caddy configuration string | `config_str: str, type: str` |
+<!-- MCP-TOOLS-TABLE:START -->
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `caddy_mcp_config` | `CONFIGTOOL` | Manage Caddy configuration and server control. |
+| `caddy_mcp_debug` | `DEBUGTOOL` | Inspect Caddy observability and profiling endpoints (metrics, expvar, pprof). |
+| `caddy_mcp_pki` | `PKITOOL` | Manage Caddy PKI app CAs and certificates. |
+| `caddy_mcp_reverse_proxy` | `REVERSE_PROXYTOOL` | Query Caddy reverse proxy upstream health and status. |
+
+_4 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
 
