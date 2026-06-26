@@ -146,6 +146,11 @@ python -m caddy_mcp.mcp_server
 |----------|---------|-------------|
 | `CADDY_URL` | `http://localhost:2019` | Caddy Administration API URL endpoint |
 | `CADDY_TOKEN` | `your_secure_bearer_token` | Optional bearer token if API is secured |
+| `CADDY_MCP_BASE_URL` | `http://localhost:2019` | Alternate Caddy Admin API URL (fallback when CADDY_URL is unset) |
+| `CADDY_MCP_USERNAME` | — | Basic-auth username for the Caddy Admin API |
+| `CADDY_MCP_PASSWORD` | — | Basic-auth password for the Caddy Admin API |
+| `CADDY_MCP_SSL_VERIFY` | `true` | Verify TLS certificates when calling the Caddy Admin API |
+| `CONFIGTOOL` | `true` | Toggle the Caddy config / debug / PKI / reverse-proxy tools |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
@@ -174,7 +179,7 @@ python -m caddy_mcp.mcp_server
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_2 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_7 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -235,6 +240,8 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
+#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `caddy_mcp_config` | `CONFIGTOOL` | Manage Caddy configuration and server control. |
@@ -242,7 +249,38 @@ The table below is auto-generated from the live server — do not edit by hand.
 | `caddy_mcp_pki` | `CONFIGTOOL` | Manage Caddy PKI app CAs and certificates. |
 | `caddy_mcp_reverse_proxy` | `CONFIGTOOL` | Query Caddy reverse proxy upstream health and status. |
 
-_4 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>21 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `caddy_adapt_config` | `APITOOL` | Adapts a configuration to Caddy JSON without loading or running it. |
+| `caddy_delete_config` | `APITOOL` | Deletes the value at the named path. |
+| `caddy_delete_id` | `APITOOL` | DELETE config via @id tag. |
+| `caddy_get_config` | `APITOOL` | Exports Caddy's current configuration at the named path. |
+| `caddy_get_debug_pprof` | `APITOOL` | Fetches a Go pprof profile from the admin endpoint (GET /debug/pprof/<profile>). |
+| `caddy_get_debug_vars` | `APITOOL` | Returns the Go expvar variables published on the admin endpoint (GET /debug/vars). |
+| `caddy_get_id` | `APITOOL` | GET config via @id tag. E.g. id_path='my_proxy/upstreams' |
+| `caddy_get_metrics` | `APITOOL` | Scrapes Caddy's Prometheus metrics from the admin endpoint (GET /metrics). |
+| `caddy_get_pki_ca` | `APITOOL` | Returns information about a particular PKI app CA. |
+| `caddy_get_pki_ca_certificates` | `APITOOL` | Returns the certificate chain of a particular PKI app CA. |
+| `caddy_get_reverse_proxy_upstreams` | `APITOOL` | Returns the current status of the configured reverse proxy upstreams. |
+| `caddy_get_routes` | `APITOOL` | Retrieve Caddy route mappings. |
+| `caddy_load_config` | `APITOOL` | Sets Caddy's configuration, overriding any previous configuration. |
+| `caddy_patch_config` | `APITOOL` | Replaces an existing object or array element at the named path. |
+| `caddy_patch_id` | `APITOOL` | PATCH config via @id tag. |
+| `caddy_post_config` | `APITOOL` | Sets or replaces object, or appends to array at the named path. |
+| `caddy_post_id` | `APITOOL` | POST config via @id tag. |
+| `caddy_put_config` | `APITOOL` | Creates new object or inserts into array at the named path. |
+| `caddy_put_id` | `APITOOL` | PUT config via @id tag. |
+| `caddy_set_config` | `APITOOL` | Alias for post_config. |
+| `caddy_stop_server` | `APITOOL` | Gracefully shuts down the server and exits the process. |
+
+</details>
+
+_4 action-routed tool(s) (default) · 21 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
