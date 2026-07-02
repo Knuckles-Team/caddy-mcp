@@ -7,7 +7,13 @@
         "caddy_mcp.mcp_server"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed"
+        "MCP_TOOL_MODE": "condensed",
+        "CADDY_MCP_BASE_URL": "http://localhost:2019",
+        "CADDY_MCP_PASSWORD": "",
+        "CADDY_MCP_USERNAME": "",
+        "CADDY_TOKEN": "your_secure_bearer_token",
+        "CADDY_URL": "http://localhost:2019",
+        "CONFIGTOOL": "true"
       }
     }
   }
