@@ -3,9 +3,9 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 
-@pytest.mark.concept("CADDY-002")
+@pytest.mark.concept("CD-OS.governance.caddy")
 def test_mcp_server_registration():
-    """CONCEPT:CADDY-002 Test that tools register successfully."""
+    """CONCEPT:CD-OS.governance.caddy Test that tools register successfully."""
     from caddy_mcp.mcp_server import get_mcp_instance
 
     res = get_mcp_instance()
@@ -19,16 +19,16 @@ def test_mcp_server_registration():
     assert len(mcp._local_provider._components) > 0
 
 
-@pytest.mark.concept("CADDY-003")
+@pytest.mark.concept("CD-OS.identity.caddy")
 def test_mcp_server_security_context():
-    """CONCEPT:CADDY-003 Verify that the server registers with correct security credentials."""
+    """CONCEPT:CD-OS.identity.caddy Verify that the server registers with correct security credentials."""
     from caddy_mcp.auth import get_client
 
     client = get_client()
     assert client is not None
 
 
-@pytest.mark.concept("CADDY-002")
+@pytest.mark.concept("CD-OS.governance.caddy")
 @pytest.mark.asyncio
 async def test_mcp_tools_routing():
     """Verify that caddy_mcp_config, caddy_mcp_pki, and caddy_mcp_reverse_proxy tools are registered and route correctly."""

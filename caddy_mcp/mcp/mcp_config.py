@@ -11,7 +11,7 @@ from caddy_mcp.auth import get_client
 
 def register_config_tools(mcp: FastMCP):
     """Register Caddy MCP config, PKI, and reverse proxy tools.
-    CONCEPT:CADDY-001
+    CONCEPT:CD-OS.config.caddy
     """
 
     @mcp.tool(tags={"config"})

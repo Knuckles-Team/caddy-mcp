@@ -18,7 +18,7 @@ DEFAULT_AGENT_SYSTEM_PROMPT = None
 
 def agent_server():
     """Start graph-based Pydantic AI agent server.
-    CONCEPT:CADDY-007
+    CONCEPT:CD-OS.config.caddy-2
     """
     from agent_utilities import (
         build_system_prompt_from_workspace,

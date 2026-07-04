@@ -5,16 +5,16 @@ import pytest
 from caddy_mcp.api_client import Api
 
 
-@pytest.mark.concept("CADDY-001")
+@pytest.mark.concept("CD-OS.config.caddy")
 def test_api_client_basic_mock(mock_ctx):
-    """CONCEPT:CADDY-001 Test basic mock initialization of client facade."""
+    """CONCEPT:CD-OS.config.caddy Test basic mock initialization of client facade."""
     assert mock_ctx is not None
     assert hasattr(mock_ctx, "info")
 
 
-@pytest.mark.concept("CADDY-001")
+@pytest.mark.concept("CD-OS.config.caddy")
 def test_api_client_endpoints(mock_ctx):
-    """CONCEPT:CADDY-001 Verify endpoint configuration on dynamic client."""
+    """CONCEPT:CD-OS.config.caddy Verify endpoint configuration on dynamic client."""
     from caddy_mcp.auth import get_client
 
     client = get_client()
@@ -22,7 +22,7 @@ def test_api_client_endpoints(mock_ctx):
     assert hasattr(client, "request")
 
 
-@pytest.mark.concept("CADDY-001")
+@pytest.mark.concept("CD-OS.config.caddy")
 def test_api_client_full_endpoints():
     """Test all the newly added Caddy REST API endpoints with mocked HTTP sessions."""
     client = Api(base_url="http://localhost:2019")

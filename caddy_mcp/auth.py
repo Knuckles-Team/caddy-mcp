@@ -1,4 +1,4 @@
-"""CONCEPT:CADDY-003 Identity credentials loader and session manager."""
+"""CONCEPT:CD-OS.identity.caddy Identity credentials loader and session manager."""
 
 from agent_utilities.base_utilities import get_logger, to_boolean
 from agent_utilities.core.config import setting

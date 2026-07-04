@@ -1,12 +1,12 @@
 # Concept Registry — Caddy MCP
 
 > **Prefix**: `CONCEPT:CADDY-*`
-> **Bridge**: `CONCEPT:ECO-4.0` (Unified Toolkit Ingestion)
+> **Bridge**: `CONCEPT:AU-ECO.messaging.native-backend-abstraction` (Unified Toolkit Ingestion)
 
 ## Project-Specific Concepts
 
 | Concept ID | Name | Description |
 |------------|------|-------------|
-| `CONCEPT:CADDY-001` | Core API Client Operations | Exposes core client capability facade |
-| `CONCEPT:CADDY-002` | FastMCP Tools Execution | Exposes FastMCP tool interface capabilities |
-| `CONCEPT:CADDY-003` | Identity & Gateway Security | Exposes authentication, authorization, and secure transport operations |
+| `CONCEPT:CD-OS.config.caddy` | Core API Client Operations | Exposes core client capability facade |
+| `CONCEPT:CD-OS.governance.caddy` | FastMCP Tools Execution | Exposes FastMCP tool interface capabilities |
+| `CONCEPT:CD-OS.identity.caddy` | Identity & Gateway Security | Exposes authentication, authorization, and secure transport operations |
