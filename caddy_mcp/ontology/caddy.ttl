@@ -1,0 +1,125 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix : <http://knuckles.team/kg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Caddy reverse-proxy / ingress ontology — servers, HTTP routes, upstream backends and
+# the PKI CAs that secure them. All classes and properties live in the shared `:` (kg#)
+# namespace; only the owl:Ontology node gets the per-package IRI. Backs the caddy-mcp MCP
+# tool surface (caddy_mcp_config get_routes / caddy_mcp_reverse_proxy get_reverse_proxy_upstreams
+# / caddy_mcp_pki get_pki_ca) and the native topology ingestion (caddy_ingest_topology).
+
+# --- classes (owl:Class) ---
+
+:ReverseProxy a owl:Class ;
+    rdfs:label "Reverse Proxy" ;
+    rdfs:comment "A Caddy HTTP server (an entry under apps/http/servers) that terminates ingress traffic and proxies it to upstreams (caddy get_routes)." .
+
+:Route a owl:Class ;
+    rdfs:label "Route" ;
+    rdfs:comment "An HTTP route within a Caddy server: a set of matchers (host/path) plus handlers (e.g. reverse_proxy) that dispatch a request." .
+
+:Upstream a owl:Class ;
+    rdfs:label "Upstream" ;
+    rdfs:comment "A backend target that a reverse_proxy handler dials, with live health/load status (caddy get_reverse_proxy_upstreams)." .
+
+:CertificateAuthority a owl:Class ;
+    rdfs:label "Certificate Authority" ;
+    rdfs:comment "A Caddy PKI app CA that issues TLS certificates for served sites (caddy get_pki_ca)." .
+
+# --- links (owl:ObjectProperty) ---
+
+:hasRoute a owl:ObjectProperty ;
+    rdfs:label "has route" ;
+    rdfs:comment "Links a ReverseProxy server to an HTTP Route it serves." ;
+    rdfs:domain :ReverseProxy ;
+    rdfs:range :Route .
+
+:routesToUpstream a owl:ObjectProperty ;
+    rdfs:label "routes to upstream" ;
+    rdfs:comment "Links a Route (via its reverse_proxy handler) to an Upstream backend it dials." ;
+    rdfs:domain :Route ;
+    rdfs:range :Upstream .
+
+:proxiesTo a owl:ObjectProperty ;
+    rdfs:label "proxies to" ;
+    rdfs:comment "Links a ReverseProxy directly to an Upstream backend it fronts." ;
+    rdfs:domain :ReverseProxy ;
+    rdfs:range :Upstream .
+
+:securedBy a owl:ObjectProperty ;
+    rdfs:label "secured by" ;
+    rdfs:comment "Links a ReverseProxy to the CertificateAuthority that issues its TLS certificates." ;
+    rdfs:domain :ReverseProxy ;
+    rdfs:range :CertificateAuthority .
+
+:managedBy a owl:ObjectProperty ;
+    rdfs:label "managed by" ;
+    rdfs:comment "Links a Caddy resource to the Person/Agent responsible for it." ;
+    rdfs:range :Person .
+
+# --- fields (owl:DatatypeProperty) ---
+
+:listenAddress a owl:DatatypeProperty ;
+    rdfs:label "listen address" ;
+    rdfs:comment "A network address a ReverseProxy server binds (e.g. ':443')." ;
+    rdfs:domain :ReverseProxy ;
+    rdfs:range xsd:string .
+
+:routeId a owl:DatatypeProperty ;
+    rdfs:label "route id" ;
+    rdfs:comment "The Caddy config @id tag (or positional index) identifying a Route." ;
+    rdfs:domain :Route ;
+    rdfs:range xsd:string .
+
+:matchHost a owl:DatatypeProperty ;
+    rdfs:label "match host" ;
+    rdfs:comment "A host matcher on a Route (the domain it answers for)." ;
+    rdfs:domain :Route ;
+    rdfs:range xsd:string .
+
+:matchPath a owl:DatatypeProperty ;
+    rdfs:label "match path" ;
+    rdfs:comment "A path matcher on a Route." ;
+    rdfs:domain :Route ;
+    rdfs:range xsd:string .
+
+:handler a owl:DatatypeProperty ;
+    rdfs:label "handler" ;
+    rdfs:comment "The primary handler kind of a Route (e.g. reverse_proxy, static_response, file_server)." ;
+    rdfs:domain :Route ;
+    rdfs:range xsd:string .
+
+:upstreamAddress a owl:DatatypeProperty ;
+    rdfs:label "upstream address" ;
+    rdfs:comment "The dial address of an Upstream backend (host:port)." ;
+    rdfs:domain :Upstream ;
+    rdfs:range xsd:string .
+
+:numRequests a owl:DatatypeProperty ;
+    rdfs:label "num requests" ;
+    rdfs:comment "Count of in-flight requests currently held against an Upstream." ;
+    rdfs:domain :Upstream ;
+    rdfs:range xsd:integer .
+
+:fails a owl:DatatypeProperty ;
+    rdfs:label "fails" ;
+    rdfs:comment "Count of recorded failures against an Upstream (passive health checking)." ;
+    rdfs:domain :Upstream ;
+    rdfs:range xsd:integer .
+
+:healthy a owl:DatatypeProperty ;
+    rdfs:label "healthy" ;
+    rdfs:comment "Whether an Upstream is currently considered healthy." ;
+    rdfs:domain :Upstream ;
+    rdfs:range xsd:boolean .
+
+<http://knuckles.team/kg/caddy> a owl:Ontology ;
+    rdfs:label "Caddy Reverse-Proxy Ontology" ;
+    rdfs:comment """Caddy ingress model — reverse-proxy servers, their HTTP routes,
+    the upstream backends those routes dial, and the PKI certificate authorities that
+    secure them — federated into the agent-utilities knowledge-graph hub.""" ;
+    owl:imports <http://knuckles.team/kg> .

@@ -1,0 +1,14 @@
+{
+  "_comment": "Tier-1 mcp_tool source preset(s) for caddy-mcp (AU-KG.ingest.mcp-tool-connector). Declarative complement to the native caddy_ingest_topology tool: syncs Caddy reverse-proxy upstreams into the KG as documents via the caddy-mcp MCP server. Contributed presets win over the central MCP_TOOL_PRESETS.",
+  "caddy-upstreams": {
+    "server": "caddy-mcp",
+    "tool": "caddy_mcp_reverse_proxy",
+    "action": "get_reverse_proxy_upstreams",
+    "records_path": "",
+    "id_field": "address",
+    "title_field": "address",
+    "text_field": "address",
+    "updated_field": null,
+    "doc_type": "caddy-upstream"
+  }
+}

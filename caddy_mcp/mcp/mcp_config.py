@@ -170,3 +170,53 @@ def register_config_tools(mcp: FastMCP):
             return client.get_debug_pprof(**kwargs)
 
         raise ValueError(f"Unknown debug action: {action}")
+
+
+def register_kg_ingest_tools(mcp: FastMCP):
+    """Register the native knowledge-graph ingestion tool for Caddy topology.
+    CONCEPT:AU-KG.ingest.enterprise-source-extractor
+    """
+
+    @mcp.tool(tags={"kg"})
+    async def caddy_ingest_topology(
+        client=Depends(get_client),
+        ctx: Context | None = Field(default=None, description="MCP context"),
+    ) -> Any:
+        """Natively ingest the live Caddy topology into epistemic-graph as typed nodes.
+
+        Reads the reverse-proxy upstreams (``get_reverse_proxy_upstreams``) and the HTTP
+        servers/routes config (``get_routes``) via the real client, then pushes them into
+        the knowledge graph as ``:ReverseProxy`` / ``:Route`` / ``:Upstream`` nodes with
+        ``:hasRoute`` / ``:routesToUpstream`` / ``:proxiesTo`` links, via the fast engine
+        client. Best-effort: ``ingested`` is ``None`` when no engine is reachable.
+        CONCEPT:AU-KG.ingest.enterprise-source-extractor.
+        """
+        if ctx:
+            await ctx.info("Ingesting Caddy topology into the knowledge graph...")
+
+        from caddy_mcp.kg_ingest import ingest_servers, ingest_upstreams
+
+        upstreams: list[Any] = []
+        try:
+            resp = client.get_reverse_proxy_upstreams()
+            upstreams = resp if isinstance(resp, list) else (resp or [])
+        except Exception as e:  # noqa: BLE001 — best-effort
+            if ctx:
+                await ctx.info(f"upstreams unavailable: {e}")
+
+        servers: dict[str, Any] = {}
+        try:
+            resp = client.get_routes()
+            if isinstance(resp, dict):
+                servers = resp
+        except Exception as e:  # noqa: BLE001 — best-effort
+            if ctx:
+                await ctx.info(f"routes unavailable: {e}")
+
+        up_result = ingest_upstreams(upstreams)
+        srv_result = ingest_servers(servers)
+        return {
+            "upstreams_listed": len(upstreams),
+            "servers_listed": len(servers),
+            "ingested": {"upstreams": up_result, "servers": srv_result},
+        }
