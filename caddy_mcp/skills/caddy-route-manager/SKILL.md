@@ -1,5 +1,6 @@
 ---
 name: caddy-route-manager
+skill_type: skill
 description: >
   Caddy Route Manager atomic skill. Manages reverse-proxy configurations,
   ingress routing, and Caddyfile reloads using caddy-mcp or direct Caddyfile manipulation.
