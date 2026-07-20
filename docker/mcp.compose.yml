@@ -2,7 +2,19 @@ version: '3.8'
 
 services:
   caddy-mcp:
-    image: knucklessg1/caddy-mcp:latest
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: ${MCP_CONTAINER_MEMORY_LIMIT:-2g}
+    cpus: ${MCP_CONTAINER_CPU_LIMIT:-1.0}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+    image: ${CADDY_MCP_AGENT_IMAGE:?set-CADDY_MCP_AGENT_IMAGE-to-image@sha256-digest}
     container_name: caddy-mcp
     hostname: caddy-mcp
     restart: always
@@ -16,7 +28,7 @@ services:
       - CADDY_URL
       - CADDY_TOKEN
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s

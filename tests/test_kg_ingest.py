@@ -8,6 +8,9 @@ CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 
 from __future__ import annotations
 
+import pytest
+from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
+
 from caddy_mcp.kg_ingest import (
     ingest_entities,
     ingest_servers,
@@ -18,6 +21,7 @@ from caddy_mcp.kg_ingest import (
 class _FakeTxn:
     def __init__(self):
         self.nodes = {}
+        self.edges = []
         self.committed = False
 
     def begin(self, graph=None):
@@ -27,33 +31,28 @@ class _FakeTxn:
     def add_node(self, txn, node_id, props):
         self.nodes[node_id] = props
 
+    def add_edge(self, txn, src, dst, props):
+        self.edges.append((src, dst, props))
+
     def commit(self, txn):
         self.committed = True
         return True
 
 
-class _FakeEdges:
-    def __init__(self):
-        self.edges = []
-
-    def add(self, src, dst, props):
-        self.edges.append((src, dst, props))
-
 
 class _FakeClient:
     def __init__(self):
         self.txn = _FakeTxn()
-        self.edges = _FakeEdges()
 
 
 def test_ingest_entities_writes_nodes_and_edges():
     c = _FakeClient()
     res = ingest_entities(
         [
-            {"id": "a", "type": "ReverseProxy", "name": "srv0"},
-            {"id": "b", "type": "Route"},
+            {"id": "a", "node_type": "ReverseProxy", "name": "srv0"},
+            {"id": "b", "node_type": "Route"},
         ],
-        [{"source": "a", "target": "b", "type": "hasRoute"}],
+        [{"source": "a", "target": "b", "relationship": "hasRoute"}],
         client=c,
         graph="__commons__",
     )
@@ -63,7 +62,7 @@ def test_ingest_entities_writes_nodes_and_edges():
     # provenance is stamped
     assert c.txn.nodes["a"]["source"] == "caddy-mcp"
     assert c.txn.nodes["a"]["domain"] == "caddy"
-    assert c.edges.edges == [("a", "b", {"type": "hasRoute"})]
+    assert c.txn.edges == [("a", "b", {"relationship": "hasRoute"})]
 
 
 def test_ingest_upstreams_maps_upstream_health():
@@ -78,7 +77,7 @@ def test_ingest_upstreams_maps_upstream_health():
     )
     assert res == {"nodes": 2, "edges": 0}
     up = c.txn.nodes["caddy:upstream:localhost:8080"]
-    assert up["type"] == "Upstream"
+    assert up["node_type"] == "Upstream"
     assert up["upstreamAddress"] == "localhost:8080"
     assert up["numRequests"] == 3
     assert up["healthy"] is True
@@ -108,23 +107,21 @@ def test_ingest_servers_maps_topology_and_links():
     # 1 proxy + 1 route + 1 upstream = 3 nodes; hasRoute + routesToUpstream + proxiesTo = 3 edges
     assert res == {"nodes": 3, "edges": 3}
     proxy = c.txn.nodes["caddy:reverseproxy:srv0"]
-    assert proxy["type"] == "ReverseProxy"
+    assert proxy["node_type"] == "ReverseProxy"
     assert proxy["listenAddress"] == ":443"
     route = c.txn.nodes["caddy:route:app_route"]
-    assert route["type"] == "Route"
+    assert route["node_type"] == "Route"
     assert route["matchHost"] == "app.example.com"
     assert route["handler"] == "reverse_proxy"
-    assert c.txn.nodes["caddy:upstream:backend:8080"]["type"] == "Upstream"
-    edge_types = {e[2]["type"] for e in c.edges.edges}
+    assert c.txn.nodes["caddy:upstream:backend:8080"]["node_type"] == "Upstream"
+    edge_types = {e[2]["relationship"] for e in c.txn.edges}
     assert edge_types == {"hasRoute", "routesToUpstream", "proxiesTo"}
 
 
-def test_ingest_noops_without_engine():
-    # No injected client + no reachable engine -> clean no-op.
-    assert ingest_entities([{"id": "a", "type": "ReverseProxy"}]) is None
+def test_ingest_rejects_legacy_structural_fields():
+    with pytest.raises(NativeIngestError, match="canonical node_type"):
+        ingest_entities([{"id": "legacy", "type": "Legacy"}], client=_FakeClient())
 
-
-def test_ingest_empty_is_noop():
-    assert ingest_entities([], client=_FakeClient()) is None
-    assert ingest_upstreams([], client=_FakeClient()) is None
-    assert ingest_servers({}, client=_FakeClient()) is None
+def test_ingest_empty_is_rejected():
+    with pytest.raises(NativeIngestError, match="at least one entity"):
+        ingest_entities([], client=_FakeClient())

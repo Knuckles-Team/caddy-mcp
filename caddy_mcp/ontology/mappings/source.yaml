@@ -1,0 +1,20 @@
+schema_version: '1'
+connector: caddy-mcp
+ontology_source: caddy
+sync:
+- preset: caddy-upstreams
+  server: caddy-mcp
+  tool: caddy_mcp_reverse_proxy
+  action: get_reverse_proxy_upstreams
+  records_path: ''
+  id_field: address
+  title_field: address
+  text_field: address
+  updated_field: null
+  doc_type: caddy-upstream
+  tool_schema_sha256: 762616fe226dc74041bf19ea86dc1510c5acf2b03c824feb4a435db48482f89b
+governance:
+  default_acl: quarantine
+  identity: opaque-reference
+  tenant: required-at-materialization
+  provenance: required-at-materialization

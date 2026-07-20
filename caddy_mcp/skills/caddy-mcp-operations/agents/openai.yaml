@@ -1,0 +1,4 @@
+interface:
+  display_name: "Caddy MCP Operations"
+  short_description: "Help with Caddy MCP Operations tasks"
+  default_prompt: "Use $caddy-mcp-operations to complete a governed provider workflow."

@@ -1,0 +1,6 @@
+{
+  "connector": "caddy-mcp",
+  "current_ontology_source": "caddy",
+  "migrations": [],
+  "schema_version": "1"
+}

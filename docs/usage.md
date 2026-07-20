@@ -39,9 +39,8 @@ Build one directly, or from the environment with `get_client()`.
 from caddy_mcp.api_client import Api
 
 api = Api(
-    base_url="http://localhost:2019",
+    base_url="https://caddy.example.invalid",
     token="",                 # optional bearer token
-    verify=True,
 )
 
 # Reads

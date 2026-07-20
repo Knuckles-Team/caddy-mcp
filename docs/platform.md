@@ -22,7 +22,7 @@ reachable from the MCP container.
 # docker/caddy.compose.yml
 services:
   caddy:
-    image: docker.io/library/caddy:latest
+    image: docker.io/library/caddy@sha256:<digest>
     container_name: caddy
     hostname: caddy
     restart: unless-stopped
@@ -77,7 +77,7 @@ reaches the Admin API by container name:
 # docker/stack.compose.yml
 services:
   caddy:
-    image: docker.io/library/caddy:latest
+    image: docker.io/library/caddy@sha256:<digest>
     hostname: caddy
     ports:
       - "80:80"
@@ -88,7 +88,7 @@ services:
       - caddy_config:/config
 
   caddy-mcp:
-    image: knucklessg1/caddy-mcp:latest
+    image: example/caddy-mcp@sha256:<digest>
     depends_on: [caddy]
     environment:
       - CADDY_URL=http://caddy:2019

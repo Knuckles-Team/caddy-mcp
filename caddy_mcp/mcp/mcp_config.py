@@ -38,8 +38,8 @@ def register_config_tools(mcp: FastMCP):
 
         try:
             kwargs = json.loads(params_json)
-        except Exception as e:
-            return {"error": f"Invalid params_json: {e}"}
+        except Exception:
+            return {"error": "Operation failed"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -94,8 +94,8 @@ def register_config_tools(mcp: FastMCP):
 
         try:
             kwargs = json.loads(params_json)
-        except Exception as e:
-            return {"error": f"Invalid params_json: {e}"}
+        except Exception:
+            return {"error": "Operation failed"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -124,8 +124,8 @@ def register_config_tools(mcp: FastMCP):
 
         try:
             kwargs = json.loads(params_json)
-        except Exception as e:
-            return {"error": f"Invalid params_json: {e}"}
+        except Exception:
+            return {"error": "Operation failed"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -157,8 +157,8 @@ def register_config_tools(mcp: FastMCP):
 
         try:
             kwargs = json.loads(params_json)
-        except Exception as e:
-            return {"error": f"Invalid params_json: {e}"}
+        except Exception:
+            return {"error": "Operation failed"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -187,8 +187,8 @@ def register_kg_ingest_tools(mcp: FastMCP):
         Reads the reverse-proxy upstreams (``get_reverse_proxy_upstreams``) and the HTTP
         servers/routes config (``get_routes``) via the real client, then pushes them into
         the knowledge graph as ``:ReverseProxy`` / ``:Route`` / ``:Upstream`` nodes with
-        ``:hasRoute`` / ``:routesToUpstream`` / ``:proxiesTo`` links, via the fast engine
-        client. Best-effort: ``ingested`` is ``None`` when no engine is reachable.
+        ``:hasRoute`` / ``:routesToUpstream`` / ``:proxiesTo`` links through native
+        ingestion. Engine, validation, and transaction failures propagate.
         CONCEPT:AU-KG.ingest.enterprise-source-extractor.
         """
         if ctx:
@@ -202,7 +202,7 @@ def register_kg_ingest_tools(mcp: FastMCP):
             upstreams = resp if isinstance(resp, list) else (resp or [])
         except Exception as e:  # noqa: BLE001 — best-effort
             if ctx:
-                await ctx.info(f"upstreams unavailable: {e}")
+                await ctx.info(f"upstreams unavailable: {type(e).__name__}")
 
         servers: dict[str, Any] = {}
         try:
@@ -211,10 +211,10 @@ def register_kg_ingest_tools(mcp: FastMCP):
                 servers = resp
         except Exception as e:  # noqa: BLE001 — best-effort
             if ctx:
-                await ctx.info(f"routes unavailable: {e}")
+                await ctx.info(f"routes unavailable: {type(e).__name__}")
 
-        up_result = ingest_upstreams(upstreams)
-        srv_result = ingest_servers(servers)
+        up_result = ingest_upstreams(upstreams) if upstreams else {"nodes": 0, "edges": 0}
+        srv_result = ingest_servers(servers) if servers else {"nodes": 0, "edges": 0}
         return {
             "upstreams_listed": len(upstreams),
             "servers_listed": len(servers),

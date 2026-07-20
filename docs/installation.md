@@ -22,7 +22,7 @@ The base install is intentionally minimal. Install the extra for what you need:
 | Extra | Install | Pulls in |
 |---|---|---|
 | `mcp` | `pip install "caddy-mcp[mcp]"` | FastMCP MCP-server runtime (`agent-utilities[mcp]`) |
-| `agent` | `pip install "caddy-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-utilities[agent,logfire]`) |
+| `agent` | `pip install "caddy-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-utilities[agent-runtime,logfire]`) |
 | `all` | `pip install "caddy-mcp[all]"` | Everything above |
 | `test` | `pip install "caddy-mcp[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |
 
@@ -48,15 +48,15 @@ uv run caddy-mcp
 
 ## Prebuilt Docker image
 
-A multi-stage, slim image is published on every release (installs `caddy-mcp[all]`,
+A multi-stage runtime image is published on every release (installs `caddy-mcp[all]`,
 entrypoint `caddy-mcp`):
 
 ```bash
-docker pull knucklessg1/caddy-mcp:latest
+docker pull example/caddy-mcp@sha256:<digest>
 
 docker run --rm -i \
   -e CADDY_URL=http://your-caddy:2019 \
-  knucklessg1/caddy-mcp:latest        # stdio transport (default)
+  example/caddy-mcp@sha256:<digest>        # stdio transport (default)
 ```
 
 For an HTTP server with a published port, see [Deployment](deployment.md).
