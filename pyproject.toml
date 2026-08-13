@@ -39,6 +39,17 @@ caddy-mcp = "caddy_mcp.connectors"
 [project.entry-points."agent_utilities.prompt_providers"]
 caddy-mcp = "caddy_mcp.prompts"
 
+[tool.uv.workspace]
+members = ["."]
+
+[tool.uv]
+override-dependencies = [
+    "fastmcp-slim[client,server]>=4.0.0b1",
+]
+
+[tool.uv.sources]
+agent-utilities = { path = ".uv-workspace-siblings/agent-utilities", editable = true }
+
 [tool.setuptools]
 include-package-data = true
 
