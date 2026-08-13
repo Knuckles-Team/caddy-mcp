@@ -22,6 +22,8 @@ from agent_utilities.knowledge_graph.memory.native_ingest import (
 
 _SOURCE = "caddy-mcp"
 _DOMAIN = "caddy"
+
+
 def ingest_entities(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None = None,

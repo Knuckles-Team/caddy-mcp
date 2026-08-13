@@ -213,7 +213,9 @@ def register_kg_ingest_tools(mcp: FastMCP):
             if ctx:
                 await ctx.info(f"routes unavailable: {type(e).__name__}")
 
-        up_result = ingest_upstreams(upstreams) if upstreams else {"nodes": 0, "edges": 0}
+        up_result = (
+            ingest_upstreams(upstreams) if upstreams else {"nodes": 0, "edges": 0}
+        )
         srv_result = ingest_servers(servers) if servers else {"nodes": 0, "edges": 0}
         return {
             "upstreams_listed": len(upstreams),

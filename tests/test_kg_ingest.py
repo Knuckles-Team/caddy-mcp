@@ -39,7 +39,6 @@ class _FakeTxn:
         return True
 
 
-
 class _FakeClient:
     def __init__(self):
         self.txn = _FakeTxn()
@@ -121,6 +120,7 @@ def test_ingest_servers_maps_topology_and_links():
 def test_ingest_rejects_legacy_structural_fields():
     with pytest.raises(NativeIngestError, match="canonical node_type"):
         ingest_entities([{"id": "legacy", "type": "Legacy"}], client=_FakeClient())
+
 
 def test_ingest_empty_is_rejected():
     with pytest.raises(NativeIngestError, match="at least one entity"):
