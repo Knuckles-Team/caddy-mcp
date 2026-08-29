@@ -123,6 +123,16 @@ def _extract_paths(matchers: Any) -> list[str]:
     return paths
 
 
+def _upstream_dial_addresses(handler: dict[str, Any]) -> list[str]:
+    if handler.get("handler") != "reverse_proxy":
+        return []
+    return [
+        str(u["dial"])
+        for u in handler.get("upstreams") or []
+        if isinstance(u, dict) and u.get("dial")
+    ]
+
+
 def _extract_upstreams(handlers: Any) -> tuple[str | None, list[str]]:
     """Return ``(primary_handler_kind, [upstream dial addresses])`` for a route's handlers."""
     kind: str | None = None
@@ -132,11 +142,93 @@ def _extract_upstreams(handlers: Any) -> tuple[str | None, list[str]]:
             continue
         if kind is None:
             kind = h.get("handler")
-        if h.get("handler") == "reverse_proxy":
-            for u in h.get("upstreams") or []:
-                if isinstance(u, dict) and u.get("dial"):
-                    addresses.append(str(u["dial"]))
+        addresses.extend(_upstream_dial_addresses(h))
     return kind, addresses
+
+
+def _server_entity(name: str, server: dict[str, Any], proxy_id: str) -> dict[str, Any]:
+    listen = server.get("listen") or []
+    return {
+        "id": proxy_id,
+        "node_type": "ReverseProxy",
+        "name": name,
+        "listenAddress": ",".join(str(a) for a in listen) or None,
+        "externalToolId": name,
+    }
+
+
+def _upstream_nodes(
+    route_id: str, proxy_id: str, addresses: list[str]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    entities: list[dict[str, Any]] = []
+    relationships: list[dict[str, Any]] = []
+    for address in addresses:
+        upstream_id = _upstream_id(address)
+        entities.append(
+            {
+                "id": upstream_id,
+                "node_type": "Upstream",
+                "upstreamAddress": address,
+                "externalToolId": address,
+            }
+        )
+        relationships.append(
+            {
+                "source": route_id,
+                "target": upstream_id,
+                "relationship": "routesToUpstream",
+            }
+        )
+        relationships.append(
+            {"source": proxy_id, "target": upstream_id, "relationship": "proxiesTo"}
+        )
+    return entities, relationships
+
+
+def _route_nodes(
+    proxy_id: str, name: str, idx: int, route: dict[str, Any]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    rid = route.get("@id") or f"{name}[{idx}]"
+    route_id = f"caddy:route:{rid}"
+    hosts = _extract_hosts(route.get("match"))
+    paths = _extract_paths(route.get("match"))
+    kind, addresses = _extract_upstreams(route.get("handle"))
+
+    entities: list[dict[str, Any]] = [
+        {
+            "id": route_id,
+            "node_type": "Route",
+            "routeId": str(rid),
+            "matchHost": ",".join(hosts) or None,
+            "matchPath": ",".join(paths) or None,
+            "handler": kind,
+            "externalToolId": str(rid),
+        }
+    ]
+    relationships: list[dict[str, Any]] = [
+        {"source": proxy_id, "target": route_id, "relationship": "hasRoute"}
+    ]
+    upstream_entities, upstream_relationships = _upstream_nodes(
+        route_id, proxy_id, addresses
+    )
+    entities.extend(upstream_entities)
+    relationships.extend(upstream_relationships)
+    return entities, relationships
+
+
+def _server_nodes(
+    name: str, server: dict[str, Any]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    proxy_id = f"caddy:reverseproxy:{name}"
+    entities: list[dict[str, Any]] = [_server_entity(name, server, proxy_id)]
+    relationships: list[dict[str, Any]] = []
+    for idx, route in enumerate(server.get("routes") or []):
+        if not isinstance(route, dict):
+            continue
+        route_entities, route_relationships = _route_nodes(proxy_id, name, idx, route)
+        entities.extend(route_entities)
+        relationships.extend(route_relationships)
+    return entities, relationships
 
 
 def ingest_servers(
@@ -157,60 +249,7 @@ def ingest_servers(
     for name, server in (servers or {}).items():
         if not isinstance(server, dict):
             continue
-        proxy_id = f"caddy:reverseproxy:{name}"
-        listen = server.get("listen") or []
-        entities.append(
-            {
-                "id": proxy_id,
-                "node_type": "ReverseProxy",
-                "name": name,
-                "listenAddress": ",".join(str(a) for a in listen) or None,
-                "externalToolId": name,
-            }
-        )
-        for idx, route in enumerate(server.get("routes") or []):
-            if not isinstance(route, dict):
-                continue
-            rid = route.get("@id") or f"{name}[{idx}]"
-            route_id = f"caddy:route:{rid}"
-            hosts = _extract_hosts(route.get("match"))
-            paths = _extract_paths(route.get("match"))
-            kind, addresses = _extract_upstreams(route.get("handle"))
-            entities.append(
-                {
-                    "id": route_id,
-                    "node_type": "Route",
-                    "routeId": str(rid),
-                    "matchHost": ",".join(hosts) or None,
-                    "matchPath": ",".join(paths) or None,
-                    "handler": kind,
-                    "externalToolId": str(rid),
-                }
-            )
-            relationships.append(
-                {"source": proxy_id, "target": route_id, "relationship": "hasRoute"}
-            )
-            for address in addresses:
-                entities.append(
-                    {
-                        "id": _upstream_id(address),
-                        "node_type": "Upstream",
-                        "upstreamAddress": address,
-                        "externalToolId": address,
-                    }
-                )
-                relationships.append(
-                    {
-                        "source": route_id,
-                        "target": _upstream_id(address),
-                        "relationship": "routesToUpstream",
-                    }
-                )
-                relationships.append(
-                    {
-                        "source": proxy_id,
-                        "target": _upstream_id(address),
-                        "relationship": "proxiesTo",
-                    }
-                )
+        server_entities, server_relationships = _server_nodes(name, server)
+        entities.extend(server_entities)
+        relationships.extend(server_relationships)
     return ingest_entities(entities, relationships, client=client, graph=graph)
