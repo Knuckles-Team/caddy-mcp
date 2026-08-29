@@ -8,6 +8,48 @@ from pydantic import Field
 
 from caddy_mcp.auth import get_client
 
+# Dispatch table for caddy_mcp_config: action name -> client method name.
+# A few actions (e.g. "set_config") are documented aliases of another
+# client method rather than a 1:1 name match.
+_CONFIG_ACTION_METHODS = {
+    "get_config": "get_config",
+    "post_config": "post_config",
+    "set_config": "post_config",
+    "put_config": "put_config",
+    "patch_config": "patch_config",
+    "delete_config": "delete_config",
+    "load_config": "load_config",
+    "stop_server": "stop_server",
+    "get_id": "get_id",
+    "post_id": "post_id",
+    "put_id": "put_id",
+    "patch_id": "patch_id",
+    "delete_id": "delete_id",
+    "adapt_config": "adapt_config",
+    "get_routes": "get_routes",
+}
+
+
+def _parsed_action_kwargs(params_json: str) -> dict[str, Any] | None:
+    """Parse ``params_json`` into a kwargs dict, dropping ``None`` values.
+
+    Returns ``None`` if ``params_json`` is not valid JSON.
+    """
+    import json
+
+    try:
+        kwargs = json.loads(params_json)
+    except Exception:
+        return None
+    return {k: v for k, v in kwargs.items() if v is not None}
+
+
+def _dispatch_config_action(client: Any, action: str, kwargs: dict[str, Any]) -> Any:
+    method_name = _CONFIG_ACTION_METHODS.get(action)
+    if method_name is None:
+        raise ValueError(f"Unknown config action: {action}")
+    return getattr(client, method_name)(**kwargs)
+
 
 def register_config_tools(mcp: FastMCP):
     """Register Caddy MCP config, PKI, and reverse proxy tools.
@@ -34,46 +76,10 @@ def register_config_tools(mcp: FastMCP):
         """Manage Caddy configuration and server control."""
         if ctx:
             await ctx.info(f"Executing config operation '{action}'...")
-        import json
-
-        try:
-            kwargs = json.loads(params_json)
-        except Exception:
+        kwargs = _parsed_action_kwargs(params_json)
+        if kwargs is None:
             return {"error": "Operation failed"}
-
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
-
-        # Route matching action
-        if action == "get_config":
-            return client.get_config(**kwargs)
-        if action in ("post_config", "set_config"):
-            return client.post_config(**kwargs)
-        if action == "put_config":
-            return client.put_config(**kwargs)
-        if action == "patch_config":
-            return client.patch_config(**kwargs)
-        if action == "delete_config":
-            return client.delete_config(**kwargs)
-        if action == "load_config":
-            return client.load_config(**kwargs)
-        if action == "stop_server":
-            return client.stop_server(**kwargs)
-        if action == "get_id":
-            return client.get_id(**kwargs)
-        if action == "post_id":
-            return client.post_id(**kwargs)
-        if action == "put_id":
-            return client.put_id(**kwargs)
-        if action == "patch_id":
-            return client.patch_id(**kwargs)
-        if action == "delete_id":
-            return client.delete_id(**kwargs)
-        if action == "adapt_config":
-            return client.adapt_config(**kwargs)
-        if action == "get_routes":
-            return client.get_routes(**kwargs)
-
-        raise ValueError(f"Unknown config action: {action}")
+        return _dispatch_config_action(client, action, kwargs)
 
     @mcp.tool(tags={"pki"})
     async def caddy_mcp_pki(
@@ -172,6 +178,28 @@ def register_config_tools(mcp: FastMCP):
         raise ValueError(f"Unknown debug action: {action}")
 
 
+async def _fetched_upstreams(client: Any, ctx: Context | None) -> list[Any]:
+    """Best-effort fetch of reverse-proxy upstream health; ``[]`` on failure."""
+    try:
+        resp = client.get_reverse_proxy_upstreams()
+        return resp if isinstance(resp, list) else (resp or [])
+    except Exception as e:  # noqa: BLE001 — best-effort
+        if ctx:
+            await ctx.info(f"upstreams unavailable: {type(e).__name__}")
+        return []
+
+
+async def _fetched_servers(client: Any, ctx: Context | None) -> dict[str, Any]:
+    """Best-effort fetch of the ``apps/http/servers`` config; ``{}`` on failure."""
+    try:
+        resp = client.get_routes()
+        return resp if isinstance(resp, dict) else {}
+    except Exception as e:  # noqa: BLE001 — best-effort
+        if ctx:
+            await ctx.info(f"routes unavailable: {type(e).__name__}")
+        return {}
+
+
 def register_kg_ingest_tools(mcp: FastMCP):
     """Register the native knowledge-graph ingestion tool for Caddy topology.
     CONCEPT:AU-KG.ingest.enterprise-source-extractor
@@ -196,22 +224,8 @@ def register_kg_ingest_tools(mcp: FastMCP):
 
         from caddy_mcp.kg_ingest import ingest_servers, ingest_upstreams
 
-        upstreams: list[Any] = []
-        try:
-            resp = client.get_reverse_proxy_upstreams()
-            upstreams = resp if isinstance(resp, list) else (resp or [])
-        except Exception as e:  # noqa: BLE001 — best-effort
-            if ctx:
-                await ctx.info(f"upstreams unavailable: {type(e).__name__}")
-
-        servers: dict[str, Any] = {}
-        try:
-            resp = client.get_routes()
-            if isinstance(resp, dict):
-                servers = resp
-        except Exception as e:  # noqa: BLE001 — best-effort
-            if ctx:
-                await ctx.info(f"routes unavailable: {type(e).__name__}")
+        upstreams = await _fetched_upstreams(client, ctx)
+        servers = await _fetched_servers(client, ctx)
 
         up_result = (
             ingest_upstreams(upstreams) if upstreams else {"nodes": 0, "edges": 0}
