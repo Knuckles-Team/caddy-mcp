@@ -117,7 +117,7 @@ sync:
   updated_field: null
   pagination: null
   doc_type: caddy-upstream
-  tool_schema_sha256: 762616fe226dc74041bf19ea86dc1510c5acf2b03c824feb4a435db48482f89b
+  tool_schema_sha256: 34b6ba4e878961b3741d91c537c655a66f0b567550b64db2a92c182c1631bbab
   raw:
     server: caddy-mcp
     tool: caddy_mcp_reverse_proxy
