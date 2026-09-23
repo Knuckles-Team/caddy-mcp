@@ -112,7 +112,18 @@ def register_config_tools(mcp: FastMCP):
 
         raise ValueError(f"Unknown PKI action: {action}")
 
-    @mcp.tool(tags={"reverse_proxy"})
+    @mcp.tool(
+        tags={"reverse_proxy"},
+        annotations={
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def caddy_mcp_reverse_proxy(
         action: Literal["get_reverse_proxy_upstreams"] = Field(
             description="Action to perform. Must be one of: 'get_reverse_proxy_upstreams'"
