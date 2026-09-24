@@ -68,43 +68,31 @@ Pick the extra that matches what you want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `caddy-mcp[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
-| `caddy-mcp[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated agent** |
-| `caddy-mcp[all]` | Everything (`mcp` + `agent`) | Development / both surfaces |
 
 ```bash
 # Connector-focused MCP server (includes the shared graph engine)
 uv pip install "caddy-mcp[mcp]"
-
-# Agent runtime (adds model orchestration to the shared graph engine)
-uv pip install "caddy-mcp[agent]"
-
-# Everything (development)
-uv pip install "caddy-mcp[all]"      # or: python -m pip install "caddy-mcp[all]"
 ```
 
-### Container images (`:mcp` vs `:agent`)
+### Container images (`:mcp`)
 
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+One `docker/Dockerfile` builds a single slim MCP-server image:
 
-| Image tag | Build target | Contents | Entrypoint |
-|-----------|--------------|----------|------------|
-| `example/caddy-mcp:mcp` | `--target mcp` | `caddy-mcp[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `caddy-mcp` |
-| `example/caddy-mcp@sha256:<digest>` | `--target agent` (default) | `caddy-mcp[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `caddy-agent` |
+| Image tag | Contents | Entrypoint |
+|-----------|----------|------------|
+| `example/caddy-mcp:mcp` | `caddy-mcp[mcp]` -- connector-focused, includes `epistemic-graph[full]` | `caddy-mcp` |
 
 ```bash
-docker build --target mcp   -t example/caddy-mcp:mcp    docker/   # connector-focused MCP server
-docker build --target agent -t example/caddy-mcp:agent-local docker/   # agent runtime
+docker build -t example/caddy-mcp:mcp docker/   # connector-focused MCP server
 ```
 
-`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/agent.compose.yml` runs the
-agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
+`docker/mcp.compose.yml` runs the connector-focused `:mcp` server.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` additionally enables model orchestration. Local
-deployments can use the bundled engine. For production or shared state, run
+The `[mcp]` extra carries the **epistemic-graph** engine through the required
+Agent Utilities core dependency (`epistemic-graph[full]`); the server stays
+connector-focused. Local deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
@@ -228,13 +216,6 @@ See the [MCP Tools](#mcp-tools) table above for the authoritative names.
 | `EUNOMIA_POLICY_FILE` | Embedded policy file | `mcp_policies.json` |
 | `EUNOMIA_REMOTE_URL` | Remote Eunomia server URL | — |
 
-### Agent CLI (full `[agent]` runtime only)
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
-| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
-| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
-| `ENABLE_WEB_UI` | Serve the AG-UI web interface | `True` |
 
 ---
 
@@ -386,7 +367,7 @@ to **"deploy `caddy-mcp` with agent-utilities-deployment"**.
 | Install mode | Command |
 |------|---------|
 | Installed package | `uv tool install "caddy-mcp[mcp]"`, then run `caddy-mcp` |
-| Editable source | `uv pip install -e ".[agent]"`, then run `caddy-mcp` |
+| Editable source | `uv pip install -e ".[mcp]"`, then run `caddy-mcp` |
 | Immutable container | deploy `registry.example.invalid/caddy-mcp@sha256:<digest>` through the operator-selected orchestrator |
 
 The repository embeds no deployment profile, credential value, certificate path, or
