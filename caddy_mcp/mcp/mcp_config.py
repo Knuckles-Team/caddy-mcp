@@ -236,3 +236,45 @@ def register_kg_ingest_tools(mcp: FastMCP):
             "servers_listed": len(servers),
             "ingested": {"upstreams": up_result, "servers": srv_result},
         }
+
+    @mcp.tool(tags={"kg", "security"})
+    async def caddy_ingest_crowdsec_decisions(
+        params_json: str = Field(
+            default="{}",
+            description="JSON with optional 'startup' (bool: full decision set, default true).",
+        ),
+        ctx: Context | None = Field(default=None, description="MCP context"),
+    ) -> Any:
+        """EH-410: ingest the edge CrowdSec decisions (bouncer stream of the Local
+        API at CROWDSEC_LAPI_URL, key from CROWDSEC_BOUNCER_KEY_REF in OpenBao) as
+        ``:IntrusionDecision`` nodes; ban targets kept whole, deleted decisions
+        marked inactive."""
+        import json as _json
+
+        from agent_utilities.core.config import setting
+        from agent_utilities.security.secrets_client import create_secrets_client
+
+        from caddy_mcp.crowdsec_feed import fetch_decisions, ingest_decisions
+
+        try:
+            kwargs = _json.loads(params_json) if params_json else {}
+        except ValueError:
+            return {"error": "params_json is not valid JSON"}
+        url = str(setting("CROWDSEC_LAPI_URL", "") or "")
+        ref = str(setting("CROWDSEC_BOUNCER_KEY_REF", "") or "")
+        key = create_secrets_client().resolve_ref(ref) if ref else ""
+        if not url or not key:
+            return {
+                "error": "CROWDSEC_LAPI_URL / CROWDSEC_BOUNCER_KEY_REF not configured"
+            }
+        if ctx:
+            await ctx.info("Ingesting CrowdSec decisions into the knowledge graph...")
+        stream = fetch_decisions(
+            url, str(key), startup=bool(kwargs.get("startup", True))
+        )
+        result = ingest_decisions(stream["new"], stream["deleted"])
+        return {
+            "new": len(stream["new"]),
+            "deleted": len(stream["deleted"]),
+            "ingested": result,
+        }
