@@ -9,7 +9,6 @@ __all__: list[str] = []
 
 CORE_MODULES = ["caddy_mcp.api_client"]
 OPTIONAL_MODULES = {
-    "caddy_mcp.agent_server": "agent",
     "caddy_mcp.mcp_server": "mcp",
 }
 
