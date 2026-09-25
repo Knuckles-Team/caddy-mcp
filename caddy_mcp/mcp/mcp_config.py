@@ -1,6 +1,6 @@
 """MCP tools for Caddy operations."""
 
-from typing import Any
+from typing import Any, Literal
 
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
@@ -112,9 +112,20 @@ def register_config_tools(mcp: FastMCP):
 
         raise ValueError(f"Unknown PKI action: {action}")
 
-    @mcp.tool(tags={"reverse_proxy"})
+    @mcp.tool(
+        tags={"reverse_proxy"},
+        annotations={
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def caddy_mcp_reverse_proxy(
-        action: str = Field(
+        action: Literal["get_reverse_proxy_upstreams"] = Field(
             description="Action to perform. Must be one of: 'get_reverse_proxy_upstreams'"
         ),
         params_json: str = Field(
