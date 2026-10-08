@@ -81,7 +81,7 @@ The transport is selected with `--transport` (or the `TRANSPORT` env var):
     ```bash
     caddy-mcp
     ```
-    For IDE / desktop MCP clients that launch the server as a subprocess.
+    For IDE / desktop MCP clients that start the server as a subprocess.
 
 === "streamable-http"
 
@@ -114,7 +114,7 @@ curl -s http://localhost:8000/health        # {"status":"OK"}
 Plus `HOST` / `PORT` / `TRANSPORT` for HTTP transports, and `CONFIGTOOL` (default
 `True`) to register the configuration tool set. A template is provided in
 [`.env.example`](https://github.com/Knuckles-Team/caddy-mcp/blob/main/.env.example) —
-copy it to `.env` and fill in your values.
+copy it to `.env` and fill in the operator's values.
 
 ## Docker Compose
 
@@ -193,7 +193,7 @@ services:
 
 ## Behind a Caddy reverse proxy
 
-Expose the HTTP server on a hostname with automatic TLS. Add to your `Caddyfile`:
+Expose the HTTP server on a hostname with automatic TLS. Add to the operator's `Caddyfile`:
 
 ```caddy
 # Internal (self-signed) — homelab .example.invalid zone
@@ -237,7 +237,7 @@ this as a tool.
 
 ## Register with an MCP client
 
-Add to your client's `mcp_config.json` (multiplexer nickname `cd`):
+Add to the operator's client's `mcp_config.json` (multiplexer nickname `cd`):
 
 ```json
 {

@@ -1,7 +1,7 @@
 # Usage — API / Agent / MCP
 
 `caddy-mcp` exposes the same capability three ways: as **MCP tools** an agent calls,
-as a **Python API** (`Api`) you import, and as a **Pydantic-AI agent**. The complete
+as a **Python API** (`Api`) the operator import, and as a **Pydantic-AI agent**. The complete
 tool surface is summarized in [Overview](overview.md).
 
 ## As an MCP server
