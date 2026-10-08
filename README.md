@@ -41,9 +41,9 @@ Caddy MCP provides a high-performance, model-optimized interface to Caddy capabi
 
 ## ⚙️ Dynamic Tool Selection & Visibility
 
-This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows you to restrict the set of exposed tools in order to prevent blowing up the LLM's context window.
+This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows the operator to restrict the set of exposed tools to prevent blowing up the LLM's context window.
 
-You can configure tool filtering via multiple input channels:
+The operator can configure tool filtering via multiple input channels:
 
 - **CLI Arguments:** Pass `--tools` or `--toolsets` (or their disabled counterparts `--disabled-tools` and `--disabled-toolsets`) during startup.
 - **Environment Variables:** Define standard environment variables:
@@ -52,23 +52,23 @@ You can configure tool filtering via multiple input channels:
 - **HTTP SSE Request Headers:** Pass custom headers during transport initialization:
   - `x-mcp-enabled-tools` / `x-mcp-disabled-tools`
   - `x-mcp-enabled-tags` / `x-mcp-disabled-tags`
-- **HTTP SSE Request Query Parameters:** Append query parameters directly to your transport connection URL:
+- **HTTP SSE Request Query Parameters:** Append query parameters directly to the operator's transport connection URL:
   - `?tools=tool1,tool2`
   - `?tags=tag1`
 
-When query strings or parameters are supplied, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
+When query strings or parameters are provided, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
 
 
 ---
 
 ## Installation
 
-Pick the extra that matches what you want to run:
+Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `caddy-mcp[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
-| `caddy-mcp[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated agent** |
+| `caddy-mcp[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `caddy-mcp[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
 | `caddy-mcp[all]` | Everything (`mcp` + `agent`) | Development / both surfaces |
 
 ```bash
@@ -103,7 +103,7 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
 Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` additionally enables model orchestration. Local
+the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
@@ -114,7 +114,7 @@ diagrams are documented in the
 
 ## Usage
 
-You can launch the FastMCP server in stdio mode via Python module execution:
+The operator can start the FastMCP server in stdio mode via Python module execution:
 
 ```python
 import asyncio
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-For direct shell launch, execute:
+For direct shell start, ran:
 
 ```bash
 python -m caddy_mcp.mcp_server
@@ -187,8 +187,8 @@ _8 package + 24 inherited variable(s). Auto-generated from `.env.example` + the 
 <!-- ENV-VARS-TABLE:END -->
 
 
-Every variable the server reads, grouped by purpose. A local template is supplied inside
-[.env.example](.env.example) — copy it as `.env` and fill out your specific service endpoint
+Every variable the server reads, grouped by purpose. A local template is provided inside
+[.env.example](.env.example) — copy it as `.env` and fill out the operator's specific service endpoint
 parameters before starting execution.
 
 ### Connection & Credentials
@@ -309,7 +309,7 @@ graph TD
 ## Deployment
 
 ### Bare-Metal (Standard pip)
-1. Set up your Python virtual environment (>= 3.10).
+1. Set up the operator's Python virtual environment (>= 3.10).
 2. Install the package: `pip install .[all]`
 3. Export credentials:
    ```bash
