@@ -228,9 +228,13 @@ def register_kg_ingest_tools(mcp: FastMCP):
         servers = await _fetched_servers(client, ctx)
 
         up_result = (
-            ingest_upstreams(upstreams) if upstreams else {"nodes": 0, "edges": 0}
+            await ingest_upstreams(upstreams)
+            if upstreams
+            else {"nodes": 0, "edges": 0}
         )
-        srv_result = ingest_servers(servers) if servers else {"nodes": 0, "edges": 0}
+        srv_result = (
+            await ingest_servers(servers) if servers else {"nodes": 0, "edges": 0}
+        )
         return {
             "upstreams_listed": len(upstreams),
             "servers_listed": len(servers),

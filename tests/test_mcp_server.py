@@ -210,8 +210,14 @@ async def test_caddy_ingest_topology_success_path():
     mock_ctx.info = AsyncMock()
 
     with (
-        patch("caddy_mcp.kg_ingest.ingest_upstreams") as mock_ingest_upstreams,
-        patch("caddy_mcp.kg_ingest.ingest_servers") as mock_ingest_servers,
+        patch(
+            "caddy_mcp.kg_ingest.ingest_upstreams",
+            new_callable=AsyncMock,
+        ) as mock_ingest_upstreams,
+        patch(
+            "caddy_mcp.kg_ingest.ingest_servers",
+            new_callable=AsyncMock,
+        ) as mock_ingest_servers,
     ):
         mock_ingest_upstreams.return_value = {"nodes": 1, "edges": 0}
         mock_ingest_servers.return_value = {"nodes": 1, "edges": 0}
