@@ -23,10 +23,10 @@ def agent_server():
     from agent_utilities import (
         build_system_prompt_from_workspace,
         create_agent_parser,
-        create_agent_server,
         initialize_workspace,
         load_identity,
     )
+    from graph_os.agent_host import create_agent_server
 
     global DEFAULT_AGENT_NAME, DEFAULT_AGENT_DESCRIPTION, DEFAULT_AGENT_SYSTEM_PROMPT
     initialize_workspace()
