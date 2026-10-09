@@ -1,69 +1,115 @@
-"""Native epistemic-graph ingestion for Caddy topology (typed graph nodes).
+"""Epistemic-graph ingestion for Caddy topology (typed graph nodes).
 
-CONCEPT:AU-KG.ingest.enterprise-source-extractor. This is the record-source twin of
-media-downloader's blob ingestion: the caddy-mcp connector natively pushes its live
-topology into the ONE epistemic-graph knowledge graph as **typed OWL nodes**
-(``:ReverseProxy``, ``:Route``, ``:Upstream``) + links through the required
-``agent_utilities.knowledge_graph.memory.native_ingest`` authority. Node ids follow
-``caddy:<class>:<externalId>``; ``node_type`` on each entity matches a class the
-package's ``ontology_providers`` ``caddy.ttl`` federates.
+CONCEPT:AU-KG.ingest.enterprise-source-extractor. The caddy-mcp connector pushes its
+live topology into the ONE epistemic-graph knowledge graph as **typed OWL nodes**
+(``:ReverseProxy``, ``:Route``, ``:Upstream``) + links through
+``agent_connector_sdk.ingest`` -- the generated ``SourceIngest`` client, not a local
+ingestion helper. Node ids follow ``caddy:<class>:<externalId>``; ``node_type`` on
+each entity matches a class the package's ``ontology_providers`` ``caddy.ttl``
+federates.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    ingest_documents as _native_ingest_documents,
+from agent_connector_sdk.ingest import (
+    ChangeSet,
+    Document,
+    Entity,
+    IngestBinding,
+    IngestError,
+    KnowledgeIngest,
+    Relationship,
+    current_ingest,
 )
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    ingest_entities as _native_ingest_entities,
-)
 
-_SOURCE = "caddy-mcp"
-_DOMAIN = "caddy"
+_BINDING = IngestBinding(connector="caddy-mcp", stream="caddy")
+
+_ENTITY_RESERVED_KEYS = frozenset({"id", "node_type"})
+_RELATIONSHIP_RESERVED_KEYS = frozenset({"source", "target", "relationship"})
 
 
-def ingest_entities(
-    entities: list[dict[str, Any]],
-    relationships: list[dict[str, Any]] | None = None,
-    *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
-) -> dict[str, int]:
-    """Write typed OWL nodes (+ edges) into epistemic-graph via the fast engine client.
-
-    Uses canonical ``node_type`` / ``relationship`` structural fields and surfaces
-    validation or engine failures as ``NativeIngestError``.
-    """
-    return _native_ingest_entities(
-        entities,
-        relationships,
-        source=source,
-        domain=domain,
-        client=client,
-        graph=graph,
+def _to_entity(record: dict[str, Any]) -> Entity:
+    return Entity(
+        id=record.get("id"),
+        node_type=record.get("node_type"),
+        properties={
+            key: value
+            for key, value in record.items()
+            if key not in _ENTITY_RESERVED_KEYS
+        },
     )
 
 
-def ingest_documents(
+def _to_relationship(record: dict[str, Any]) -> Relationship:
+    properties = {
+        key: value
+        for key, value in record.items()
+        if key not in _RELATIONSHIP_RESERVED_KEYS
+    }
+    return Relationship(
+        source=record["source"],
+        target=record["target"],
+        relationship=record["relationship"],
+        properties=properties or None,
+    )
+
+
+async def ingest_entities(
+    entities: list[dict[str, Any]],
+    relationships: list[dict[str, Any]] | None = None,
+    *,
+    ingest: KnowledgeIngest | None = None,
+) -> dict[str, int]:
+    """Write typed OWL nodes (+ edges) into epistemic-graph via the SDK ingest facade.
+
+    Uses canonical ``node_type`` / ``relationship`` structural fields and surfaces
+    a malformed change set or a refused commit as ``IngestError``.
+    """
+    if not entities:
+        raise IngestError("ingest_entities needs at least one entity")
+    change_set = ChangeSet(
+        entities=tuple(_to_entity(entity) for entity in entities),
+        relationships=tuple(
+            _to_relationship(relationship) for relationship in relationships or ()
+        ),
+    )
+    service = ingest or current_ingest()
+    receipt = await service.submit(_BINDING, change_set)
+    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
+
+
+async def ingest_documents(
     documents: list[dict[str, Any]],
     *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Write text records as ``:Document`` nodes (semantic-search fodder).
 
     Each doc: ``{"id":..., "text":..., "title"?:..., "source_uri"?:..., ...props}``.
-    Delegates directly to the required native ingestion authority.
     """
-    return _native_ingest_documents(
-        documents, source=source, domain=domain, client=client, graph=graph
+    if not documents:
+        raise IngestError("ingest_documents needs at least one document")
+    change_set = ChangeSet(
+        documents=tuple(
+            Document(
+                id=doc["id"],
+                text=doc["text"],
+                title=doc.get("title"),
+                source_uri=doc.get("source_uri"),
+                properties={
+                    key: value
+                    for key, value in doc.items()
+                    if key not in {"id", "text", "title", "source_uri"}
+                },
+            )
+            for doc in documents
+        )
     )
+    service = ingest or current_ingest()
+    receipt = await service.submit(_BINDING, change_set)
+    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
 
 
 # ---------------------------------------------------------------------------
@@ -75,11 +121,10 @@ def _upstream_id(address: str) -> str:
     return f"caddy:upstream:{address}"
 
 
-def ingest_upstreams(
+async def ingest_upstreams(
     upstreams: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map ``get_reverse_proxy_upstreams`` records -> ``:Upstream`` nodes and ingest.
 
@@ -102,7 +147,7 @@ def ingest_upstreams(
                 "externalToolId": address,
             }
         )
-    return ingest_entities(entities, None, client=client, graph=graph)
+    return await ingest_entities(entities, None, ingest=ingest)
 
 
 def _extract_hosts(matchers: Any) -> list[str]:
@@ -231,11 +276,10 @@ def _server_nodes(
     return entities, relationships
 
 
-def ingest_servers(
+async def ingest_servers(
     servers: dict[str, Any],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map the ``apps/http/servers`` config -> ``:ReverseProxy`` + ``:Route`` (+ ``:Upstream``).
 
@@ -252,4 +296,4 @@ def ingest_servers(
         server_entities, server_relationships = _server_nodes(name, server)
         entities.extend(server_entities)
         relationships.extend(server_relationships)
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)
