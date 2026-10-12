@@ -604,9 +604,7 @@ def _classify_component(
     """Return "violation", "unknown", or "ok" for one SBOM component."""
 
     if not isinstance(component, dict):
-        raise SecurityContractError(
-            "software bill of materials component is invalid"
-        )
+        raise SecurityContractError("software bill of materials component is invalid")
     licenses, malformed = _component_licenses(component)
     if not licenses:
         return "violation" if malformed else "unknown"

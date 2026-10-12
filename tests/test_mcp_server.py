@@ -264,3 +264,19 @@ async def test_caddy_ingest_topology_falls_back_on_fetch_errors():
             "servers": {"nodes": 0, "edges": 0},
         },
     }
+
+
+@pytest.mark.asyncio
+async def test_ingest_toggle_preserves_administration_tools(monkeypatch):
+    from caddy_mcp.mcp_server import get_mcp_instance
+
+    monkeypatch.setenv("KG_INGESTTOOL", "false")
+    monkeypatch.setattr("sys.argv", ["caddy-mcp", "--transport", "stdio"])
+    mcp, *_ = get_mcp_instance()
+    names = {tool.name for tool in await mcp.list_tools()}
+    assert names == {
+        "caddy_mcp_config",
+        "caddy_mcp_debug",
+        "caddy_mcp_pki",
+        "caddy_mcp_reverse_proxy",
+    }

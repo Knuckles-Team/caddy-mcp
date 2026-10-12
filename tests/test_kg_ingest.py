@@ -121,17 +121,15 @@ async def test_ingest_servers_maps_topology_and_links(ingest):
     # 1 proxy + 1 route + 1 upstream = 3 nodes; hasRoute + routesToUpstream + proxiesTo = 3 edges
     assert res == {"nodes": 3, "edges": 3}
     request = transport.requests[0]
-    proxy = next(
-        r for r in request.records if r.record_id == "caddy:reverseproxy:srv0"
-    )
+    proxy = next(r for r in request.records if r.record_id == "caddy:reverseproxy:srv0")
     assert proxy.payload["listenAddress"] == ":443"
     route = next(r for r in request.records if r.record_id == "caddy:route:app_route")
     assert route.payload["matchHost"] == "app.example.com"
     assert route.payload["handler"] == "reverse_proxy"
-    assert any(
-        r.record_id == "caddy:upstream:backend:8080" for r in request.records
-    )
-    relations = {rel.relation_reference.rsplit("/", 1)[-1] for rel in request.relationships}
+    assert any(r.record_id == "caddy:upstream:backend:8080" for r in request.records)
+    relations = {
+        rel.relation_reference.rsplit("/", 1)[-1] for rel in request.relationships
+    }
     assert relations == {"hasRoute", "routesToUpstream", "proxiesTo"}
 
 

@@ -78,3 +78,6 @@ where = [ ".",]
 
 [tool.pipelines_hooks.ste]
 exempt = ["specs/*", "specs/**/*"]
+
+[tool.pytest.ini_options]
+markers = ["concept(id): associate a test with its existing concept identifier"]

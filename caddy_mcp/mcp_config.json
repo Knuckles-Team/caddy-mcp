@@ -7,11 +7,11 @@
         "caddy_mcp.mcp_server"
       ],
       "env": {
-        "MCP_TOOL_MODE": "intent",
         "CADDY_MCP_BASE_URL": "http://localhost:2019",
         "CADDY_TOKEN": "your_secure_bearer_token",
         "CADDY_URL": "http://localhost:2019",
-        "CONFIGTOOL": "true"
+        "CONFIGTOOL": "true",
+        "KG_INGESTTOOL": "true"
       }
     }
   }
