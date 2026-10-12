@@ -153,6 +153,8 @@ python -m caddy_mcp.mcp_server
 | `CADDY_TLS_PROFILE` | — | Verify TLS certificates when calling the Caddy Admin API |
 | `CADDY_TLS_PROFILE_REF` | — |  |
 | `CONFIGTOOL` | `true` | Toggle the Caddy config / debug / PKI / reverse-proxy tools |
+| `KG_INGESTTOOL` | `true` | Toggle the SDK-registered graph topology ingestion tool |
+| `CADDY_MCP_AGENT_IMAGE` | — | Operator-approved immutable image@sha256 reference for the Compose service |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
@@ -161,7 +163,6 @@ python -m caddy_mcp.mcp_server
 | `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
 | `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
 | `PORT` | `8000` | Bind port (HTTP transports) |
-| `MCP_TOOL_MODE` | `intent` | Tool surface: `intent` \| `condensed` \| `verbose` \| `both` |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
@@ -179,11 +180,11 @@ python -m caddy_mcp.mcp_server
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | `openai` | LLM provider for the agent |
-| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `PROVIDER` | — | Operator-configured LLM provider for the agent |
+| `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_8 package + 24 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_10 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -244,52 +245,129 @@ The table below is auto-generated from the live server — do not edit by hand.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+#### Intent tools
 
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `caddy_mcp_config` | `CONFIGTOOL` | Manage Caddy configuration and server control. |
-| `caddy_mcp_debug` | `CONFIGTOOL` | Inspect Caddy observability and profiling endpoints (metrics, expvar, pprof). |
-| `caddy_mcp_pki` | `CONFIGTOOL` | Manage Caddy PKI app CAs and certificates. |
-| `caddy_mcp_reverse_proxy` | `CONFIGTOOL` | Query Caddy reverse proxy upstream health and status. |
+| MCP Tool | Kind | Description |
+|----------|------|-------------|
+| `caddy_ingest_topology` | intent | Natively ingest the live Caddy topology into epistemic-graph as typed nodes. |
+| `caddy_mcp_config` | intent | Manage Caddy configuration and server control. |
+| `caddy_mcp_debug` | intent | Inspect Caddy observability and profiling endpoints (metrics, expvar, pprof). |
+| `caddy_mcp_pki` | intent | Manage Caddy PKI app CAs and certificates. |
+| `caddy_mcp_reverse_proxy` | intent | Query Caddy reverse proxy upstream health and status. |
 
-#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
-
-<details>
-<summary>21 per-operation tools — one per public API method (click to expand)</summary>
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `caddy_adapt_config` | `APITOOL` | Adapts a configuration to Caddy JSON without loading or running it. |
-| `caddy_delete_config` | `APITOOL` | Deletes the value at the named path. |
-| `caddy_delete_id` | `APITOOL` | DELETE config via @id tag. |
-| `caddy_get_config` | `APITOOL` | Exports Caddy's current configuration at the named path. |
-| `caddy_get_debug_pprof` | `APITOOL` | Fetches a Go pprof profile from the admin endpoint (GET /debug/pprof/<profile>). |
-| `caddy_get_debug_vars` | `APITOOL` | Returns the Go expvar variables published on the admin endpoint (GET /debug/vars). |
-| `caddy_get_id` | `APITOOL` | GET config via @id tag. E.g. id_path='my_proxy/upstreams' |
-| `caddy_get_metrics` | `APITOOL` | Scrapes Caddy's Prometheus metrics from the admin endpoint (GET /metrics). |
-| `caddy_get_pki_ca` | `APITOOL` | Returns information about a particular PKI app CA. |
-| `caddy_get_pki_ca_certificates` | `APITOOL` | Returns the certificate chain of a particular PKI app CA. |
-| `caddy_get_reverse_proxy_upstreams` | `APITOOL` | Returns the current status of the configured reverse proxy upstreams. |
-| `caddy_get_routes` | `APITOOL` | Retrieve Caddy route mappings. |
-| `caddy_load_config` | `APITOOL` | Sets Caddy's configuration, overriding any previous configuration. |
-| `caddy_patch_config` | `APITOOL` | Replaces an existing object or array element at the named path. |
-| `caddy_patch_id` | `APITOOL` | PATCH config via @id tag. |
-| `caddy_post_config` | `APITOOL` | Sets or replaces object, or appends to array at the named path. |
-| `caddy_post_id` | `APITOOL` | POST config via @id tag. |
-| `caddy_put_config` | `APITOOL` | Creates new object or inserts into array at the named path. |
-| `caddy_put_id` | `APITOOL` | PUT config via @id tag. |
-| `caddy_set_config` | `APITOOL` | Alias for post_config. |
-| `caddy_stop_server` | `APITOOL` | Gracefully shuts down the server and exits the process. |
-
-</details>
-
-_4 action-routed tool(s) (default) · 21 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_5 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operation>', params={...})` (`ask` for reads); `find(action='describe', params={'action': '<operation>'})` returns its arguments. An operation is enabled unless its `<DOMAIN>TOOL` toggle is set false. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
 
 ---
+
+## MCP Configuration Examples
+
+<!-- MCP-CONFIG-EXAMPLES:START -->
+
+> **Install the connector-focused `[mcp]` extra.** Examples use `caddy-mcp[mcp]` to add
+> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> enables model orchestration.
+
+#### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
+
+```json
+{
+  "mcpServers": {
+    "caddy-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "caddy-mcp[mcp]",
+        "caddy-mcp"
+      ],
+      "env": {
+        "CADDY_MCP_BASE_URL": "http://localhost:2019",
+        "CADDY_TOKEN": "your_secure_bearer_token",
+        "CADDY_URL": "http://localhost:2019",
+        "CONFIGTOOL": "true",
+        "KG_INGESTTOOL": "true"
+      }
+    }
+  }
+}
+```
+
+Runtime references require an alias-aware launcher such as GraphOS. Other
+launchers must omit those entries and inject the resolved values through their
+own runtime secret boundary.
+
+#### Streamable-HTTP Transport (networked / production)
+
+```json
+{
+  "mcpServers": {
+    "caddy-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "caddy-mcp[mcp]",
+        "caddy-mcp",
+        "--transport",
+        "streamable-http",
+        "--port",
+        "8000"
+      ],
+      "env": {
+        "TRANSPORT": "streamable-http",
+        "HOST": "127.0.0.1",
+        "PORT": "8000",
+        "CADDY_MCP_BASE_URL": "http://localhost:2019",
+        "CADDY_TOKEN": "your_secure_bearer_token",
+        "CADDY_URL": "http://localhost:2019",
+        "CONFIGTOOL": "true",
+        "KG_INGESTTOOL": "true"
+      }
+    }
+  }
+}
+```
+
+Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
+
+```json
+{
+  "mcpServers": {
+    "caddy-mcp": {
+      "url": "http://localhost:8000/caddy-mcp/mcp"
+    }
+  }
+}
+```
+
+Run a reviewed container image as a least-privilege stdio child (no
+listener or published port):
+
+```bash
+docker run -i --rm \
+  --read-only \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges \
+  --pids-limit=256 \
+  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
+  -e TRANSPORT=stdio \
+  -e CADDY_MCP_BASE_URL=http://localhost:2019 \
+  -e CADDY_TOKEN=your_secure_bearer_token \
+  -e CADDY_URL=http://localhost:2019 \
+  -e CONFIGTOOL=true \
+  -e KG_INGESTTOOL=true \
+  registry.example.invalid/caddy-mcp@sha256:<digest> caddy-mcp
+```
+
+For containerized network HTTP, supply an authenticated TLS ingress (or
+direct server TLS), exact `MCP_ALLOWED_HOSTS`, and an exact trusted-proxy
+CIDR policy through the operator-owned deployment profile. The generator
+does not emit an unauthenticated non-loopback listener.
+
+_Auto-generated from the code-read env surface (package vars) — do not edit._
+<!-- MCP-CONFIG-EXAMPLES:END -->
 
 ## Architecture
 
