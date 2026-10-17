@@ -21,8 +21,8 @@ The base install is intentionally minimal. Install the extra for what the operat
 
 | Extra | Install | Pulls in |
 |---|---|---|
-| `mcp` | `pip install "caddy-mcp[mcp]"` | FastMCP MCP-server runtime (`agent-utilities[mcp]`) |
-| `agent` | `pip install "caddy-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-utilities[agent-runtime,logfire]`) |
+| `mcp` | `pip install "caddy-mcp[mcp]"` | FastMCP MCP-server runtime (`agent-connector-sdk[mcp]`) |
+| `agent` | `pip install "caddy-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-connector-sdk[agent-runtime,logfire]`) |
 | `all` | `pip install "caddy-mcp[all]"` | Everything above |
 | `test` | `pip install "caddy-mcp[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |
 
