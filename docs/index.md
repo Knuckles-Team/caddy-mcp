@@ -1,6 +1,6 @@
 # caddy-mcp
 
-Caddy reverse-proxy **API + MCP Server** for the agent-utilities ecosystem — a
+Caddy reverse-proxy **API + MCP Server** for the Arbora ecosystem — a
 typed, deterministic tool surface over the Caddy **Admin API** for configuration,
 PKI, and reverse-proxy management.
 

@@ -9,7 +9,6 @@ __all__: list[str] = []
 
 CORE_MODULES = ["caddy_mcp.api_client"]
 OPTIONAL_MODULES = {
-    "caddy_mcp.agent_server": "agent",
     "caddy_mcp.mcp_server": "mcp",
 }
 
@@ -41,7 +40,6 @@ def _import_module_safely(module_name: str):
 # Availability flags map to the substring identifying their optional module.
 _AVAILABILITY_FLAGS = {
     "_MCP_AVAILABLE": "mcp_server",
-    "_AGENT_AVAILABLE": "agent_server",
 }
 
 _MISSING = object()

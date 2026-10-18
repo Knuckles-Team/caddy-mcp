@@ -1,5 +1,5 @@
 site_name: "caddy-mcp"
-site_description: "Caddy reverse-proxy Admin API + MCP Server — typed, deterministic configuration, PKI, and reverse-proxy tools for the agent-utilities ecosystem."
+site_description: "Caddy reverse-proxy Admin API + MCP Server — typed, deterministic configuration, PKI, and reverse-proxy tools for the Arbora ecosystem."
 site_url: "https://knuckles-team.github.io/caddy-mcp/"
 repo_name: "Knuckles-Team/caddy-mcp"
 repo_url: "https://github.com/Knuckles-Team/caddy-mcp"

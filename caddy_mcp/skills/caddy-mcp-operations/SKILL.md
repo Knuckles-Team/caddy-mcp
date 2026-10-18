@@ -2,12 +2,12 @@
 name: caddy-mcp-operations
 skill_type: skill
 description: >-
-  Operate caddy-mcp through its governed MCP and GraphOS capabilities, including caddy route manager. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
+  Operate caddy-mcp through its governed MCP and Arbora capabilities, including caddy route manager. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
 
 # Caddy Mcp Operations
 
-Use the provider's governed MCP tools through GraphOS delegation.
+Use the provider's governed MCP tools through Arbora delegation.
 
 ## Workflow
 
