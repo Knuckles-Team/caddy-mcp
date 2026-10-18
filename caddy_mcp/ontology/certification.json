@@ -1,14 +1,14 @@
 {
   "api_version": "arbora.io/v1",
   "artifacts": {
-    "caddy_mcp/connectors/mcp_source_presets.json": "ff267b100dc450a3772f08997fd7e0cc78f776192371671b7465c2596cea5472",
-    "caddy_mcp/connectors/tool_schema_fingerprints.json": "2d06a72e6d2f5ef42398a02fcd70aeb58061c68ba8dd00a4998bd3d170499bb4",
+    "caddy_mcp/connectors/mcp_source_presets.json": "dfb9dc0bb9b2a6ee54d2bd0ebb58d3d5f21867f70d46eace5a1f62b39b0178e2",
+    "caddy_mcp/connectors/tool_schema_fingerprints.json": "c90a54ac1bf91848fba9178cf6584bc5ff7e538ed097d30ab3aaf2ab17ff5b0d",
     "caddy_mcp/ontology/caddy.ttl": "6b728a347170d0dd87ff3cd9f163fef1d69ed286e8931c889f333e04dedd451f",
     "caddy_mcp/ontology/fixtures/records.json": "a7be17fc8b5d1cd0f226ab14ea58fe0a74ee44a0c0419dc892d6f02487c07271",
     "caddy_mcp/ontology/mappings/source.yaml": "7313f350cea46d5c56470a07dc5ff829cf6eb31c3a11f11dee5be4ec50586204",
     "caddy_mcp/ontology/migrations/manifest.json": "a010f64a8fe3744c748def514ad75dd86130deb69a2a02d6ecaa5f4bf65e57b0",
     "caddy_mcp/ontology/shapes/connector.shacl.ttl": "e3cf30f04e8d9b4c6843849e60e95e512de31e860fe27b375d7b0569aedb234e",
-    "connector_manifest.yml": "7c18e09ea9a51c4acdd50a83b69af37bec6c3b5fd816d60418bb3f61a7c93ef7"
+    "connector_manifest.yml": "9329e02cf175956c309dd63cd0ac022660241e47c6ef21a927ecddb3cf5866a7"
   },
   "checks": {
     "declared_tool_schema": "passed",
