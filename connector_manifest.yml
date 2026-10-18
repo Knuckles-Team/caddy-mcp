@@ -108,8 +108,8 @@ schema_mappings:
 sync:
 - preset: caddy-upstreams
   server: caddy-mcp
-  tool: caddy_mcp_reverse_proxy
-  action: get_reverse_proxy_upstreams
+  tool: caddy_get_reverse_proxy_upstreams
+  action: null
   records_path: ''
   id_field: address
   title_field: address
@@ -117,11 +117,10 @@ sync:
   updated_field: null
   pagination: null
   doc_type: caddy-upstream
-  tool_schema_sha256: 762616fe226dc74041bf19ea86dc1510c5acf2b03c824feb4a435db48482f89b
+  tool_schema_sha256: 20ae567153e450431f540394f56ea98b4b119adfa5d91a97cd7453f043e45d15
   raw:
     server: caddy-mcp
-    tool: caddy_mcp_reverse_proxy
-    action: get_reverse_proxy_upstreams
+    tool: caddy_get_reverse_proxy_upstreams
     records_path: ''
     id_field: address
     title_field: address
