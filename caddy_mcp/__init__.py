@@ -4,7 +4,7 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "0.32.0"
+__version__ = "2.3.1"
 __all__: list[str] = []
 
 CORE_MODULES = ["caddy_mcp.api_client"]

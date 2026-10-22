@@ -10,11 +10,11 @@ from fastmcp.utilities.logging import get_logger
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from caddy_mcp import __version__  # single source: package __init__
 from caddy_mcp.api_client import Api
 from caddy_mcp.auth import get_client
 from caddy_mcp.mcp import mcp_config
 
-__version__ = "0.15.0"
 logger = get_logger(name="caddy_mcp")
 
 
