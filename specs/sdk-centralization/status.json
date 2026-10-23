@@ -14,21 +14,28 @@
       "title": "Requests use the governed SDK client",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
-      "verified_by": []
+      "verified_by": [
+        "tests/test_sdk_centralization.py:27"
+      ]
     },
     {
       "id": "CONN-CADDY-MCP-SDK-CENTRALIZATION-R002",
       "title": "SDK floor and dependency set",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
-      "verified_by": []
+      "verified_by": [
+        "tests/test_sdk_centralization.py:58"
+      ]
     },
     {
       "id": "CONN-CADDY-MCP-SDK-CENTRALIZATION-R003",
       "title": "Production wiring and hot path",
       "delivery_state": "SPECIFIED",
       "landed_in": [],
-      "verified_by": []
+      "verified_by": [
+        "tests/test_sdk_centralization.py:27",
+        "tests/test_sdk_centralization.py:43"
+      ]
     }
   ]
 }
