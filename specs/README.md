@@ -13,3 +13,4 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 ## Local specifications
 
 - [`CONN-CADDY-MCP`](caddy-mcp/spec.md) — Connector identity and release metadata.
+- [`CONN-CADDY-MCP-SDK-CENTRALIZATION`](sdk-centralization/spec.md) — Shared SDK capabilities in caddy-mcp

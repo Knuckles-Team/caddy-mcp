@@ -1,7 +1,10 @@
 from typing import Any
 from urllib.parse import urljoin
 
-import requests
+import httpx
+from agent_connector_sdk.auth.static import BearerAuth
+from agent_connector_sdk.http.client import create_http_client
+from agent_connector_sdk.http.options import HttpClientOptions
 from agent_connector_sdk.tls.profile import ResolvedTLSProfile
 from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
@@ -20,14 +23,21 @@ class ApiClientBase:
         self.username = username
         self.password = password
         self.last_etag: str | None = None
-        self._session = requests.Session()
+        auth: httpx.Auth | None = None
         self.tls_profile = tls_profile or resolve_tls_profile("caddy")
-        self.tls_profile.configure_requests_session(self._session)
 
         if token:
-            self._session.headers.update({"Authorization": f"Bearer {token}"})
+            auth = BearerAuth(token)
         elif username and password:
-            self._session.auth = (username, password)
+            auth = httpx.BasicAuth(username, password)
+        self._session = create_http_client(
+            HttpClientOptions(
+                base_url=self.base_url,
+                tls=self.tls_profile,
+                auth=auth,
+                allow_plaintext=self.base_url.startswith("http://"),
+            )
+        )
 
     def request(
         self,
