@@ -4,8 +4,6 @@
   "schema_version": "1.0",
   "prompt_version": "0.1.0",
   "source": "caddy-mcp",
-  "extends": "agent-connector-sdk:base",
-  "compose": "append",
   "description": "Caddy ingress specialist: reverse-proxy routing, TLS/PKI, upstream health, and live-config operations over the caddy-mcp MCP server.",
   "metadata": {
     "topic": "Caddy reverse proxy / ingress",

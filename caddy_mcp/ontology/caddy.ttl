@@ -18,9 +18,8 @@
     rdfs:label "Reverse Proxy" ;
     rdfs:comment "A Caddy HTTP server (an entry under apps/http/servers) that terminates ingress traffic and proxies it to upstreams (caddy get_routes)." .
 
-:Route a owl:Class ;
-    rdfs:label "Route" ;
-    rdfs:comment "An HTTP route within a Caddy server: a set of matchers (host/path) plus handlers (e.g. reverse_proxy) that dispatch a request." .
+:Route a owl:Class .
+
 
 :Upstream a owl:Class ;
     rdfs:label "Upstream" ;
@@ -121,5 +120,10 @@
     rdfs:label "Caddy Reverse-Proxy Ontology" ;
     rdfs:comment """Caddy ingress model — reverse-proxy servers, their HTTP routes,
     the upstream backends those routes dial, and the PKI certificate authorities that
-    secure them — federated into the agent-connector-sdk knowledge-graph hub.""" ;
-    owl:imports <http://knuckles.team/kg> .
+    secure them — federated into the agent-connector-sdk knowledge-graph hub.""" .
+
+# ontology-codemod R3
+<http://knuckles.team/kg#ReverseProxy> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#ReverseProxy> .
+
+# ontology-codemod R4
+<http://knuckles.team/kg#CertificateAuthority> rdfs:subClassOf <http://knuckles.team/kg#Agent> .

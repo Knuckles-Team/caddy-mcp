@@ -1,8 +1,0 @@
-{
-  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
-  "connector": "caddy-mcp",
-  "schema_version": "1",
-  "tools": {
-    "caddy_get_reverse_proxy_upstreams": "20ae567153e450431f540394f56ea98b4b119adfa5d91a97cd7453f043e45d15"
-  }
-}
