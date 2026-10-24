@@ -22,13 +22,13 @@ Stateless atomic operation to configure and manage reverse-proxy domain routing 
 ## Prerequisites
 
 - `caddy-mcp` — for communicating with Caddy admin API or reloading configuration.
-- `systems-manager-mcp` — for direct reading and editing of the global `/home/apps/caddy/Caddyfile` configuration.
+- `systems-manager-mcp` — for direct reading and editing of the global `~/caddy/Caddyfile` configuration.
 
 ## Steps
 
 ### Step 1: Parse and Locate Target Caddyfile
 Verify the location of the active Caddy configuration:
-- Locate the primary Caddyfile at `/home/apps/caddy/Caddyfile`.
+- Locate the primary Caddyfile at `~/caddy/Caddyfile`.
 - Inspect the file structure and verify that it parses cleanly.
 
 ### Step 2: Ingress Block Modification
@@ -44,6 +44,6 @@ Create or update domain routing blocks for the target service:
 
 ### Step 3: Config Verification & Reload
 Apply configurations dynamically with zero downtime:
-- Run validation checks on Caddy syntax: `caddy validate --config /home/apps/caddy/Caddyfile`.
+- Run validation checks on Caddy syntax: `caddy validate --config ~/caddy/Caddyfile`.
 - Trigger hot reload via `caddy-mcp` administrative tools or by signaling the Caddy process (`caddy reload`).
 - Verify routing health by sending check requests.
