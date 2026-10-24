@@ -4,7 +4,6 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "2.3.4"
 __all__: list[str] = []
 
 CORE_MODULES = ["caddy_mcp.api_client"]
@@ -80,3 +79,20 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     return sorted(list(globals().keys()) + __all__)
+
+
+from agent_connector_sdk.connector import Connector
+
+from caddy_mcp.api_client import Api
+from caddy_mcp.auth import get_client
+
+connector = Connector(
+    api=Api,
+    get_client=get_client,
+    tools="caddy_mcp.mcp.mcp_config",
+    instructions="Caddy MCP MCP Server - Managed dynamic operations.",
+    transports=(
+        "stdio",
+        "streamable-http",
+    ),
+)
