@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Added the source-backed `caddy-mcp-development` skill with the connector
+  runtime, auth/TLS, focused checks, and Pages publication contract.
 - 100% Caddy Admin API parity: added the default observability endpoints — `get_metrics` (`/metrics`), `get_debug_vars` (`/debug/vars`), and `get_debug_pprof` (`/debug/pprof/<profile>`) — to the API client (CONCEPT:CADDY-001).
 - New `caddy_mcp_debug` action-dispatch MCP tool routing to `get_metrics` / `get_debug_vars` / `get_debug_pprof`, keeping MCP↔API parity at 100% (CONCEPT:CADDY-002).
 

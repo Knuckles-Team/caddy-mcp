@@ -71,3 +71,17 @@ def test_release_hook_inherits_catalogue_policy():
     assert repo["repo"] == "https://github.com/Knuckles-Team/pipelines"
     assert repo["rev"] == "main"
     assert hook == {"id": "dependency-readiness"}
+
+
+def test_development_skill_is_source_backed():
+    skill = (ROOT / "caddy_mcp/skills/caddy-mcp-development/SKILL.md").read_text()
+    for fragment in (
+        "caddy_mcp/__init__.py",
+        "caddy_mcp/mcp/mcp_config.py",
+        "CADDY_URL",
+        "CADDY_TOKEN",
+        "Rapid delivery: the 5-minute contract",
+        "tests/test_mcp_server.py",
+        "spec_dashboard_enabled",
+    ):
+        assert fragment in skill
