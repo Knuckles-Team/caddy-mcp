@@ -61,5 +61,5 @@ def test_dependencies_have_no_unused_requests_pin():
     deps = tomllib.loads((root / "pyproject.toml").read_text())["project"][
         "dependencies"
     ]
-    assert any(d.startswith("agent-connector-sdk") for d in deps)
+    assert any(d.startswith("scion-sdk") for d in deps)
     assert not any(d.lower().startswith("requests") for d in deps)
