@@ -16,4 +16,4 @@ The version the `caddy_mcp` package reports at runtime (`caddy_mcp.__version__`)
 
 ## Boundaries
 
-The connector contract, certification and transport rules belong to agent-connector-sdk. Release publication belongs to the repository pipeline.
+The connector contract, certification and transport rules belong to scion-sdk. Release publication belongs to the repository pipeline.

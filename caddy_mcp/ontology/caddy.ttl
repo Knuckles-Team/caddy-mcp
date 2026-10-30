@@ -120,7 +120,7 @@
     rdfs:label "Caddy Reverse-Proxy Ontology" ;
     rdfs:comment """Caddy ingress model — reverse-proxy servers, their HTTP routes,
     the upstream backends those routes dial, and the PKI certificate authorities that
-    secure them — federated into the agent-connector-sdk knowledge-graph hub.""" .
+    secure them — federated into the scion-sdk knowledge-graph hub.""" .
 
 # ontology-codemod R3
 <http://knuckles.team/kg#ReverseProxy> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#ReverseProxy> .
