@@ -3,7 +3,7 @@
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. The caddy-mcp connector pushes its
 live topology into the ONE epistemic-graph knowledge graph as **typed OWL nodes**
 (``:ReverseProxy``, ``:Route``, ``:Upstream``) + links through
-``agent_connector_sdk.ingest`` -- the generated ``SourceIngest`` client, not a local
+``scion_sdk.ingest`` -- the generated ``SourceIngest`` client, not a local
 ingestion helper. Node ids follow ``caddy:<class>:<externalId>``; ``node_type`` on
 each entity matches a class the package's ``ontology_providers`` ``caddy.ttl``
 federates.
@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     ChangeSet,
     Document,
     Entity,

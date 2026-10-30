@@ -32,7 +32,7 @@ boundaries.
   `caddy_mcp/skills/` are packaged connector content. `pyproject.toml` already
   includes each tree through `caddy_mcp` package data; inspect a built wheel when
   changing content.
-- The only declared console script is `caddy-mcp = agent_connector_sdk.cli:serve`.
+- The only declared console script is `caddy-mcp = scion_sdk.cli:serve`.
   Do not invent a second server or claim a `caddy-agent` entry point.
 
 ## Rapid delivery: the 5-minute contract

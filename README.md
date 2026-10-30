@@ -67,8 +67,8 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `caddy-mcp[mcp]` | Connector-focused MCP server (`agent-connector-sdk[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `caddy-mcp[agent]` | Agent runtime (`agent-connector-sdk[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `caddy-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `caddy-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
 | `caddy-mcp[all]` | Everything (`mcp` + `agent`) | Development / both surfaces |
 
 ```bash
@@ -156,7 +156,7 @@ python -m caddy_mcp.mcp_server
 | `KG_INGESTTOOL` | `true` | Toggle the SDK-registered graph topology ingestion tool |
 | `CADDY_MCP_AGENT_IMAGE` | — | Operator-approved immutable image@sha256 reference for the Compose service |
 
-#### Inherited agent-connector-sdk variables (apply to every connector)
+#### Inherited scion-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -184,7 +184,7 @@ python -m caddy_mcp.mcp_server
 | `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_10 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
+_10 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -267,7 +267,7 @@ See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md)
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `caddy-mcp[mcp]` to add
-> FastMCP / FastAPI through `agent-connector-sdk[mcp]`; the required Agent Utilities core
+> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Agent Utilities core
 > still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
@@ -451,15 +451,15 @@ recommended reference for installation, deployment, and day-to-day operation.
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete details.
 
 
-<!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
+<!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-connector-sdk-deployment`
+## Deploy with `scion-sdk-deployment`
 
-Provision this package with the consolidated **`agent-connector-sdk-deployment`**
+Provision this package with the consolidated **`scion-sdk-deployment`**
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `caddy-mcp` with agent-connector-sdk-deployment"**.
+to **"deploy `caddy-mcp` with scion-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
@@ -471,7 +471,7 @@ The repository embeds no deployment profile, credential value, certificate path,
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
 configured secret provider.
 
-<!-- END agent-connector-sdk-deployment -->
+<!-- END scion-sdk-deployment -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract
