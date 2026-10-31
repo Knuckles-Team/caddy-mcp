@@ -2,9 +2,10 @@
   "schema_version": 2,
   "spec_id": "CONN-CADDY-MCP-CONNECTOR-CONTENT",
   "owner_repo": "caddy-mcp",
-  "delivery_state": "LANDED",
+  "delivery_state": "SPECIFIED",
   "requirement_ids": [
-    "CONN-CADDY-MCP-CONNECTOR-CONTENT-R001"
+    "CONN-CADDY-MCP-CONNECTOR-CONTENT-R001",
+    "CONN-CADDY-MCP-CONNECTOR-CONTENT-R002"
   ],
   "requirements": [
     {
@@ -14,6 +15,13 @@
       "landed_in": [
         "62ce16ce8227"
       ],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-CADDY-MCP-CONNECTOR-CONTENT-R002",
+      "title": "Declare access contracts for the competency reads of caddy-mcp",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
       "verified_by": []
     }
   ]
