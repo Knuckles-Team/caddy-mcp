@@ -210,7 +210,7 @@ def register_kg_ingest_tools(mcp: FastMCP):
         client=Depends(get_client),
         ctx: Context | None = Field(default=None, description="MCP context"),
     ) -> Any:
-        """Natively ingest the live Caddy topology into epistemic-graph as typed nodes.
+        """Natively ingest the live Caddy topology into medulla as typed nodes.
 
         Reads the reverse-proxy upstreams (``get_reverse_proxy_upstreams``) and the HTTP
         servers/routes config (``get_routes``) via the real client, then pushes them into
