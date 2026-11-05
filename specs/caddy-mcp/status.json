@@ -2,7 +2,7 @@
   "schema_version": 2,
   "spec_id": "CONN-CADDY-MCP",
   "owner_repo": "caddy-mcp",
-  "delivery_state": "SPECIFIED",
+  "delivery_state": "LANDED",
   "requirement_ids": [
     "CONN-CADDY-MCP-R001"
   ],
@@ -10,8 +10,11 @@
     {
       "id": "CONN-CADDY-MCP-R001",
       "title": "Connector reports its released version",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
+      "delivery_state": "LANDED",
+      "landed_in": [
+        "0e1ad813a056",
+        "ae0b9aab5f7d"
+      ],
       "verified_by": []
     }
   ]
