@@ -12,8 +12,10 @@
     {
       "id": "CONN-CADDY-MCP-SDK-CENTRALIZATION-R001",
       "title": "Requests use the governed SDK client",
-      "delivery_state": "SPECIFIED",
-      "landed_in": [],
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "0e1ad813a056"
+      ],
       "verified_by": [
         "tests/test_sdk_centralization.py:27"
       ]
