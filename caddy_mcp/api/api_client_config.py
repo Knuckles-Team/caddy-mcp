@@ -29,8 +29,15 @@ class Api(ApiClientBase):
         return self.request("POST", "/load", data=config, headers=headers)
 
     def stop_server(self) -> dict:
-        """Gracefully shuts down the server and exits the process."""
+        """Gracefully shuts down the live Caddy server and exits the process.
+
+        This stops the edge proxy. The tool takes ``confirm=true`` (or a live
+        caller confirmation) before it runs.
+        """
         return self.request("POST", "/stop")
+
+    # Gate the tool as destructive so the SDK adds the ``confirm`` parameter.
+    stop_server.__http_method__ = "DELETE"  # type: ignore[attr-defined]
 
     def get_config(self, path: str = "") -> Any:
         """Exports Caddy's current configuration at the named path."""

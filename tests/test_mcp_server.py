@@ -1,24 +1,6 @@
-import pytest
+import asyncio
 
-# Characterizes every caddy_mcp_config action -> client method mapping before
-# any refactor of the if/elif dispatch chain in caddy_mcp/mcp/mcp_config.py.
-_CONFIG_ACTION_TO_METHOD = {
-    "get_config": "get_config",
-    "post_config": "post_config",
-    "set_config": "post_config",
-    "put_config": "put_config",
-    "patch_config": "patch_config",
-    "delete_config": "delete_config",
-    "load_config": "load_config",
-    "stop_server": "stop_server",
-    "get_id": "get_id",
-    "post_id": "post_id",
-    "put_id": "put_id",
-    "patch_id": "patch_id",
-    "delete_id": "delete_id",
-    "adapt_config": "adapt_config",
-    "get_routes": "get_routes",
-}
+import pytest
 
 
 @pytest.mark.concept("CD-OS.identity.caddy")
@@ -28,3 +10,34 @@ def test_mcp_server_security_context():
 
     client = get_client()
     assert client is not None
+
+
+def _served_tools():
+    from scion_sdk._connector_serve import build_server
+
+    mcp = build_server("caddy_mcp", command_args=[])[1]
+    return {t.name: t for t in asyncio.run(mcp.list_tools())}
+
+
+def test_no_tool_routes_an_action():
+    for name, tool in _served_tools().items():
+        assert "action" not in tool.parameters.get("properties", {}), name
+
+
+def test_stop_server_takes_confirm():
+    """The live edge proxy stops only on a confirmed call."""
+    tool = _served_tools()["caddy_stop_server"]
+    assert "confirm" in tool.parameters["properties"]
+    assert tool.annotations.destructive_hint is True
+
+
+def test_every_config_operation_is_its_own_tool():
+    names = set(_served_tools())
+    for op in (
+        "get_config", "post_config", "set_config", "put_config", "patch_config",
+        "delete_config", "load_config", "stop_server", "get_id", "post_id",
+        "put_id", "patch_id", "delete_id", "adapt_config", "get_routes",
+        "get_pki_ca", "get_pki_ca_certificates", "get_reverse_proxy_upstreams",
+        "get_metrics", "get_debug_vars", "get_debug_pprof",
+    ):  # fmt: skip
+        assert f"caddy_{op}" in names

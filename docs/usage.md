@@ -6,29 +6,35 @@ tool surface is summarized in [Overview](overview.md).
 
 ## As an MCP server
 
-Once [deployed](deployment.md), the server registers action-dispatch tools grouped by
-Caddy Admin API capability:
+Once [deployed](deployment.md), the server serves one typed tool per Caddy Admin API
+operation (`caddy_<operation>`):
 
-| Tool | Tag | Actions |
-|---|---|---|
-| `caddy_mcp_config` | `config` | `get_config`, `post_config`, `set_config`, `put_config`, `patch_config`, `delete_config`, `load_config`, `stop_server`, `get_id`, `post_id`, `put_id`, `patch_id`, `delete_id`, `adapt_config`, `get_routes` |
-| `caddy_mcp_pki` | `pki` | `get_pki_ca`, `get_pki_ca_certificates` |
-| `caddy_mcp_reverse_proxy` | `reverse_proxy` | `get_reverse_proxy_upstreams` |
-| `caddy_mcp_debug` | `debug` | `get_metrics`, `get_debug_vars`, `get_debug_pprof` |
+| Area | Tools |
+|---|---|
+| Configuration | `caddy_get_config`, `caddy_post_config`, `caddy_set_config`, `caddy_put_config`, `caddy_patch_config`, `caddy_delete_config`, `caddy_load_config`, `caddy_adapt_config`, `caddy_get_routes` |
+| Nodes by `@id` | `caddy_get_id`, `caddy_post_id`, `caddy_put_id`, `caddy_patch_id`, `caddy_delete_id` |
+| Server control | `caddy_stop_server` |
+| PKI | `caddy_get_pki_ca`, `caddy_get_pki_ca_certificates` |
+| Reverse proxy | `caddy_get_reverse_proxy_upstreams` |
+| Observability | `caddy_get_metrics`, `caddy_get_debug_vars`, `caddy_get_debug_pprof` |
+| Knowledge graph | `caddy_ingest_topology` |
 
 Together these cover the full Caddy Admin API surface: configuration (`/load`, `/stop`,
-`/config/…`, `/id/…`, `/adapt`), PKI (`/pki/ca/…`), reverse-proxy upstream health
+`/config/...`, `/id/...`, `/adapt`), PKI (`/pki/ca/...`), reverse-proxy upstream health
 (`/reverse_proxy/upstreams`), and the observability endpoints served on the admin
-endpoint by default (`/metrics`, `/debug/vars`, `/debug/pprof/…`).
+endpoint by default (`/metrics`, `/debug/vars`, `/debug/pprof/...`).
 
-Each tool takes an `action` and a `params_json` string matching the underlying method
-signature. Example agent prompts that map onto these tools:
+`caddy_delete_config`, `caddy_delete_id` and `caddy_stop_server` are destructive. Each
+takes `confirm=true` when the client cannot answer a confirmation prompt.
+`caddy_stop_server` stops the live edge proxy.
 
-- *"Export Caddy's current configuration"* → `caddy_mcp_config` with `get_config`
-- *"Show the reverse-proxy upstream health"* → `caddy_mcp_reverse_proxy` with `get_reverse_proxy_upstreams`
-- *"Return the local PKI CA certificate chain"* → `caddy_mcp_pki` with `get_pki_ca_certificates`
-- *"Scrape Caddy's Prometheus metrics"* → `caddy_mcp_debug` with `get_metrics`
-- *"Grab a heap profile in text form"* → `caddy_mcp_debug` with `get_debug_pprof` and `params_json='{"profile": "heap", "params": {"debug": 1}}'`
+Example agent prompts that map onto these tools:
+
+- *"Export Caddy's current configuration"* -> `caddy_get_config`
+- *"Show the reverse-proxy upstream health"* -> `caddy_get_reverse_proxy_upstreams`
+- *"Return the local PKI CA certificate chain"* -> `caddy_get_pki_ca_certificates`
+- *"Scrape Caddy's Prometheus metrics"* -> `caddy_get_metrics`
+- *"Grab a heap profile in text form"* -> `caddy_get_debug_pprof` with `profile="heap"` and `params={"debug": 1}`
 
 ## As a Python API
 

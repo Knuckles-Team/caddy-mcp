@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.10] - 2026-11-06
+
+### Added
+- `caddy_stop_server` takes `confirm` and is marked destructive: it stops the live edge proxy.
+- Complete connector surface on `scion-sdk>=0.9.0`: task contracts, data locations, business roles, an operator prompt and two role prompts, and the `caddy-mcp-observability` skill.
+
+### Removed
+- The four action-routed tools (`caddy_mcp_config`, `caddy_mcp_pki`, `caddy_mcp_reverse_proxy`, `caddy_mcp_debug`); every operation is already its own typed tool.
+
 ## [2.3.9] - 2026-11-06
 
 ### Fixed
