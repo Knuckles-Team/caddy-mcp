@@ -28,6 +28,9 @@ class Api(ApiClientBase):
 
         return self.request("POST", "/load", data=config, headers=headers)
 
+    # Replaces the whole live config: gate as destructive so the SDK adds ``confirm``.
+    load_config.__http_method__ = "DELETE"  # type: ignore[attr-defined]
+
     def stop_server(self) -> dict:
         """Gracefully shuts down the live Caddy server and exits the process.
 
@@ -64,6 +67,9 @@ class Api(ApiClientBase):
             headers["If-Match"] = if_match
         return self.request("PUT", f"/config/{path}", data=config, headers=headers)
 
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    put_config.__http_method__ = "DELETE"  # type: ignore[attr-defined]
+
     def patch_config(self, path: str, config: Any, if_match: str | None = None) -> Any:
         """Replaces an existing object or array element at the named path."""
         path = path.lstrip("/")
@@ -71,6 +77,9 @@ class Api(ApiClientBase):
         if if_match:
             headers["If-Match"] = if_match
         return self.request("PATCH", f"/config/{path}", data=config, headers=headers)
+
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    patch_config.__http_method__ = "DELETE"  # type: ignore[attr-defined]
 
     def delete_config(self, path: str = "", if_match: str | None = None) -> Any:
         """Deletes the value at the named path."""

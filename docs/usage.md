@@ -24,7 +24,7 @@ Together these cover the full Caddy Admin API surface: configuration (`/load`, `
 (`/reverse_proxy/upstreams`), and the observability endpoints served on the admin
 endpoint by default (`/metrics`, `/debug/vars`, `/debug/pprof/...`).
 
-`caddy_delete_config`, `caddy_delete_id` and `caddy_stop_server` are destructive. Each
+`caddy_delete_config`, `caddy_delete_id`, `caddy_load_config`, `caddy_put_config`, `caddy_patch_config` and `caddy_stop_server` are destructive. Each
 takes `confirm=true` when the client cannot answer a confirmation prompt.
 `caddy_stop_server` stops the live edge proxy.
 
