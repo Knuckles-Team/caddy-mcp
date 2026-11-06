@@ -4,7 +4,8 @@
   "owner_repo": "caddy-mcp",
   "delivery_state": "LANDED",
   "requirement_ids": [
-    "CONN-CADDY-MCP-R001"
+    "CONN-CADDY-MCP-R001",
+    "CONN-CADDY-MCP-R002"
   ],
   "requirements": [
     {
@@ -15,6 +16,13 @@
         "0e1ad813a056",
         "ae0b9aab5f7d"
       ],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-CADDY-MCP-R002",
+      "title": "Live-config writes require confirmation",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
       "verified_by": []
     }
   ]

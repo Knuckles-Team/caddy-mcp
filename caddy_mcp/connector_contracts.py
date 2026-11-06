@@ -184,7 +184,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 tool="caddy_put_config",
-                params=("path", "config", "if_match"),
+                params=("path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -192,12 +192,16 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
             ToolStep(
                 tool="caddy_patch_config",
-                params=("path", "config", "if_match"),
+                params=("path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -205,6 +209,10 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
@@ -336,7 +344,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 tool="caddy_load_config",
-                params=("config", "config_adapter", "force_reload"),
+                params=("config", "config_adapter", "force_reload", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -344,6 +352,10 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
