@@ -9,25 +9,31 @@
 # Caddy reverse-proxy / ingress ontology — servers, HTTP routes, upstream backends and
 # the PKI CAs that secure them. All classes and properties live in the shared `:` (kg#)
 # namespace; only the owl:Ontology node gets the per-package IRI. Backs the caddy-mcp MCP
-# tool surface (caddy_mcp_config get_routes / caddy_mcp_reverse_proxy get_reverse_proxy_upstreams
-# / caddy_mcp_pki get_pki_ca) and the native topology ingestion (caddy_ingest_topology).
+# tool surface (caddy_get_routes, caddy_get_reverse_proxy_upstreams, caddy_get_pki_ca)
+# and the native topology ingestion (caddy_ingest_topology).
 
 # --- classes (owl:Class) ---
 
 :ReverseProxy a owl:Class ;
     rdfs:label "Reverse Proxy" ;
-    rdfs:comment "A Caddy HTTP server (an entry under apps/http/servers) that terminates ingress traffic and proxies it to upstreams (caddy get_routes)." .
+    rdfs:comment "A Caddy HTTP server (an entry under apps/http/servers) that terminates ingress traffic and proxies it to upstreams (caddy get_routes)." ;
+    rdfs:subClassOf :Service .
 
-:Route a owl:Class .
+:Route a owl:Class ;
+    rdfs:label "Route" ;
+    rdfs:comment "An HTTP route of a Caddy server: its matchers and the handler that serves matching requests." ;
+    rdfs:subClassOf :ProxyRoute .
 
 
 :Upstream a owl:Class ;
     rdfs:label "Upstream" ;
-    rdfs:comment "A backend target that a reverse_proxy handler dials, with live health/load status (caddy get_reverse_proxy_upstreams)." .
+    rdfs:comment "A backend target that a reverse_proxy handler dials, with live health/load status (caddy get_reverse_proxy_upstreams)." ;
+    rdfs:subClassOf :Endpoint .
 
 :CertificateAuthority a owl:Class ;
     rdfs:label "Certificate Authority" ;
-    rdfs:comment "A Caddy PKI app CA that issues TLS certificates for served sites (caddy get_pki_ca)." .
+    rdfs:comment "A Caddy PKI app CA that issues TLS certificates for served sites (caddy get_pki_ca)." ;
+    rdfs:subClassOf :Resource .
 
 # --- links (owl:ObjectProperty) ---
 
@@ -121,9 +127,3 @@
     rdfs:comment """Caddy ingress model — reverse-proxy servers, their HTTP routes,
     the upstream backends those routes dial, and the PKI certificate authorities that
     secure them — federated into the scion-sdk knowledge-graph hub.""" .
-
-# ontology-codemod R3
-<http://knuckles.team/kg#ReverseProxy> rdfs:subClassOf <http://knuckles.team/kg/infrastructure#ReverseProxy> .
-
-# ontology-codemod R4
-<http://knuckles.team/kg#CertificateAuthority> rdfs:subClassOf <http://knuckles.team/kg#Agent> .
