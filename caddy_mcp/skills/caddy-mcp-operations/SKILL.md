@@ -30,7 +30,7 @@ Caddy applies every change atomically to live traffic. Work in small scoped edit
 ## Remove a route
 
 1. `caddy_get_id` (or `caddy_get_config`) to confirm the target.
-2. `caddy_delete_id`, `caddy_delete_config`, `caddy_put_config`, `caddy_patch_config` or `caddy_load_config` with `confirm=true` after the requester agrees.
+2. `caddy_delete_id`, `caddy_delete_config`, `caddy_put_config`, `caddy_patch_config`, `caddy_load_config`, `caddy_put_id`, `caddy_patch_id`, `caddy_post_id`, `caddy_post_config` or `caddy_set_config` with `confirm=true` after the requester agrees.
 3. `caddy_get_routes` to verify it is gone.
 
 ## Replace the whole configuration

@@ -11,11 +11,25 @@ from fastmcp import Client
 
 from caddy_mcp.api.api_client_base import ApiClientBase
 
-GATED = ("caddy_load_config", "caddy_put_config", "caddy_patch_config")
+GATED = (
+    "caddy_load_config",
+    "caddy_put_config",
+    "caddy_patch_config",
+    "caddy_put_id",
+    "caddy_patch_id",
+    "caddy_post_id",
+    "caddy_post_config",
+    "caddy_set_config",
+)
 ARGS = {
     "caddy_load_config": {"config": {"apps": {}}},
     "caddy_put_config": {"path": "apps/http/servers/x", "config": {"a": 1}},
     "caddy_patch_config": {"path": "apps/http/servers/x", "config": {"a": 2}},
+    "caddy_put_id": {"id_path": "site-x", "config": {"a": 1}},
+    "caddy_patch_id": {"id_path": "site-x", "config": {"a": 2}},
+    "caddy_post_id": {"id_path": "site-x/routes", "config": {"a": 3}},
+    "caddy_post_config": {"path": "apps/http/servers/x/routes", "config": {"a": 4}},
+    "caddy_set_config": {"path": "apps/http/servers/x/routes", "config": {"a": 5}},
 }
 
 

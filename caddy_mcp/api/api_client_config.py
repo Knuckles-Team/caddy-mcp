@@ -55,9 +55,15 @@ class Api(ApiClientBase):
             headers["If-Match"] = if_match
         return self.request("POST", f"/config/{path}", data=config, headers=headers)
 
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    post_config.__http_method__ = "DELETE"  # type: ignore[attr-defined]
+
     def set_config(self, path: str, config: Any, if_match: str | None = None) -> Any:
         """Alias for post_config."""
         return self.post_config(path, config, if_match=if_match)
+
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    set_config.__http_method__ = "DELETE"  # type: ignore[attr-defined]
 
     def put_config(self, path: str, config: Any, if_match: str | None = None) -> Any:
         """Creates new object or inserts into array at the named path."""
@@ -103,6 +109,9 @@ class Api(ApiClientBase):
             headers["If-Match"] = if_match
         return self.request("POST", f"/id/{id_path}", data=config, headers=headers)
 
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    post_id.__http_method__ = "DELETE"  # type: ignore[attr-defined]
+
     def put_id(self, id_path: str, config: Any, if_match: str | None = None) -> Any:
         """PUT config via @id tag."""
         id_path = id_path.lstrip("/")
@@ -111,6 +120,9 @@ class Api(ApiClientBase):
             headers["If-Match"] = if_match
         return self.request("PUT", f"/id/{id_path}", data=config, headers=headers)
 
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    put_id.__http_method__ = "DELETE"  # type: ignore[attr-defined]
+
     def patch_id(self, id_path: str, config: Any, if_match: str | None = None) -> Any:
         """PATCH config via @id tag."""
         id_path = id_path.lstrip("/")
@@ -118,6 +130,9 @@ class Api(ApiClientBase):
         if if_match:
             headers["If-Match"] = if_match
         return self.request("PATCH", f"/id/{id_path}", data=config, headers=headers)
+
+    # Changes the live proxy config: gate as destructive so the SDK adds ``confirm``.
+    patch_id.__http_method__ = "DELETE"  # type: ignore[attr-defined]
 
     def delete_id(self, id_path: str, if_match: str | None = None) -> Any:
         """DELETE config via @id tag."""

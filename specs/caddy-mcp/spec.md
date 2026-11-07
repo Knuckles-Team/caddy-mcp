@@ -13,7 +13,7 @@ The version the `caddy_mcp` package reports at runtime (`caddy_mcp.__version__`)
 | ID | Requirement | Evidence |
 | --- | --- | --- |
 | `CONN-CADDY-MCP-R001` | Connector reports its released version: `__version__` equals the `pyproject.toml` version, and the version bump tool updates both together. | `tests/test_version.py` |
-| `CONN-CADDY-MCP-R002` | Live-config writes require confirmation: `caddy_load_config`, `caddy_put_config` and `caddy_patch_config` take `confirm`; without it (and without a client that can elicit) the call is refused with a typed message to repeat with confirm=true; with it, stdio and HTTP both succeed. | `tests/test_config_confirm.py` |
+| `CONN-CADDY-MCP-R002` | Live-config writes require confirmation: `caddy_load_config`, `caddy_put_config`, `caddy_patch_config`, `caddy_put_id`, `caddy_patch_id`, `caddy_post_id`, `caddy_post_config` and `caddy_set_config` take `confirm`; without it (and without a client that can elicit) the call is refused with a typed message to repeat with confirm=true; with it, stdio and HTTP both succeed. | `tests/test_config_confirm.py` |
 
 ## Boundaries
 

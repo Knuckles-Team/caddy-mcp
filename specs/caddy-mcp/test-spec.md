@@ -8,7 +8,7 @@ Proof: `tests/test_version.py::test_reported_version_matches_the_released_packag
 
 | Case | Fixture/action | Expected result |
 | --- | --- | --- |
-| CONF-T1 | stdio, no auth, no elicitation: call load/put/patch without confirm | Typed refusal naming confirm=true; Caddy not called |
+| CONF-T1 | stdio, no auth, no elicitation: call load, put, patch, put_id, patch_id, post_id, post_config, set_config without confirm | Typed refusal naming confirm=true; Caddy not called |
 | CONF-T2 | stdio, no auth: call with confirm=true | Call runs |
 | CONF-T3 | HTTP: call without then with confirm=true | Refused, then runs |
 
