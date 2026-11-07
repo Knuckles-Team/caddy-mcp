@@ -44,6 +44,16 @@ No unknowns. Each row names the code it touches.
 
 Tool names, arguments, URL joining, error types and result shapes stay identical.
 
+### Adoption of scion-sdk 0.10.0 (CONN-CADDY-MCP-SDK-CENTRALIZATION-R004)
+
+- Owner. This repository, the import lines named in `CONN-CADDY-MCP-SDK-CENTRALIZATION-R004`. The paths belong to scion-sdk.
+- Cohesion. The import edits, the pin and the lock change together and sit in one change.
+- Dependency direction. The connector imports public modules of the SDK units; no import points to a private module.
+- Interface depth. The connector uses the public surface only.
+- Special cases. None. Every removed path takes the same replacement, with no alias.
+- State. None.
+- Environment. None. The pin is package metadata, not environment code.
+
 ## Phase 2: Task approach
 
 `tasks.md` holds one task line per row, producer first.

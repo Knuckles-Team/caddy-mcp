@@ -7,3 +7,4 @@ Each task line reads `- [ ] T001 [P] [US1] <ID>-R012.4 description`. Order is pr
 - [ ] T001 [US1] CONN-CADDY-MCP-SDK-CENTRALIZATION-R001 Requests use the governed SDK client.
 - [ ] T002 [US1] CONN-CADDY-MCP-SDK-CENTRALIZATION-R002 SDK floor and dependency set.
 - [ ] T003 [US1] CONN-CADDY-MCP-SDK-CENTRALIZATION-R003 Production wiring and hot path.
+- [ ] T004 [US1] CONN-CADDY-MCP-SDK-CENTRALIZATION-R004 Adopt scion-sdk 0.10.0 import paths. Size: S, 1 PR, 30 minutes.
