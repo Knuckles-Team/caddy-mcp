@@ -85,7 +85,7 @@ wheels = [
 
 [[package]]
 name = "caddy-mcp"
-version = "2.3.11"
+version = "2.3.12"
 source = { editable = "." }
 dependencies = [
     { name = "scion-sdk", extra = ["mcp"] },

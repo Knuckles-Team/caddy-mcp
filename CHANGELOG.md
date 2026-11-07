@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.12] - 2026-11-06
+
+### Added
+- `caddy_put_id`, `caddy_patch_id`, `caddy_post_id`, `caddy_post_config` and its alias `caddy_set_config` change the live proxy config, so they are destructive and take `confirm` like `caddy_load_config`. A stdio or no-auth caller passes `confirm=true`; without it the call is refused with a message to repeat it with `confirm=true`.
+
 ## [2.3.11] - 2026-11-06
 
 ### Added

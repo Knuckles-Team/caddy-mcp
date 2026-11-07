@@ -87,7 +87,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 tool="caddy_post_config",
-                params=("path", "config", "if_match"),
+                params=("path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -95,12 +95,16 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
             ToolStep(
                 tool="caddy_post_id",
-                params=("id_path", "config", "if_match"),
+                params=("id_path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -108,12 +112,16 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
             ToolStep(
                 tool="caddy_set_config",
-                params=("path", "config", "if_match"),
+                params=("path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -121,6 +129,10 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
@@ -158,7 +170,7 @@ CONTRACTS = (
             ),
             ToolStep(
                 tool="caddy_put_id",
-                params=("id_path", "config", "if_match"),
+                params=("id_path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -166,12 +178,16 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
             ToolStep(
                 tool="caddy_patch_id",
-                params=("id_path", "config", "if_match"),
+                params=("id_path", "config", "if_match", "confirm"),
                 result=("result",),
                 refusals=(
                     Refusal(
@@ -179,6 +195,10 @@ CONTRACTS = (
                     ),
                     Refusal(
                         "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
                     ),
                 ),
             ),
