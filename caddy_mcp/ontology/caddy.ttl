@@ -102,7 +102,7 @@
 :routeHostname a owl:DatatypeProperty ;
     rdfs:label "route hostname" ;
     rdfs:comment "The host name a proxy route matches on." ;
-    rdfs:domain :ProxyRoute ;
+    rdfs:domain :Route ;
     rdfs:range xsd:string .
 
 :upstreamAddress a owl:DatatypeProperty ;

@@ -1,9 +1,10 @@
-@prefix ac: <https://knuckles-team.github.io/agent-connector-sdk/access#> .
-@prefix kg: <http://knuckles.team/kg#> .
+@prefix ac: <https://knuckles-team.github.io/ontology/access#> .
+@prefix kg: <https://knuckles-team.github.io/ontology/connector/caddy#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix cd: <http://knuckles.team/kg/caddy-access#> .
 
 cd:routeAccess a ac:AccessContract ;
-    ac:classIri kg:ProxyRoute ;
+    ac:classIri core:Route ;
     ac:sourceId "caddy-mcp" ;
     ac:entity "route" ;
     ac:keyField "address" ;

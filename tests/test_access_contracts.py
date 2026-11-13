@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 from fastmcp import Client
-from scion_sdk._connector_serve import build_server
+from scion_sdk.connector import build_server
 from scion_sdk.access_contract import parse_access_contracts
 
 from caddy_mcp.api_client import Api
