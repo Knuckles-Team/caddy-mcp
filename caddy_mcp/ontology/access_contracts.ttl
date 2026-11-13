@@ -1,0 +1,15 @@
+@prefix ac: <https://knuckles-team.github.io/agent-connector-sdk/access#> .
+@prefix kg: <http://knuckles.team/kg#> .
+@prefix cd: <http://knuckles.team/kg/caddy-access#> .
+
+cd:routeAccess a ac:AccessContract ;
+    ac:classIri kg:ProxyRoute ;
+    ac:sourceId "caddy-mcp" ;
+    ac:entity "route" ;
+    ac:keyField "address" ;
+    ac:accessKind "mcp_tool" ;
+    ac:operation "caddy_get_reverse_proxy_upstreams" ;
+    ac:pagination "none" .
+
+cd:upstreamAddress a ac:PropertyBinding ;
+    ac:contract cd:routeAccess ; ac:property kg:upstreamAddress ; ac:field "address" .
