@@ -1,4 +1,4 @@
-"""Epistemic-graph ingestion for Caddy topology (typed graph nodes).
+"""Medulla ingestion for Caddy topology (typed graph nodes).
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. The caddy-mcp connector pushes its
 live topology into the ONE medulla knowledge graph as **typed OWL nodes**

@@ -1,7 +1,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/caddy#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -17,23 +18,23 @@
 :ReverseProxy a owl:Class ;
     rdfs:label "Reverse Proxy" ;
     rdfs:comment "A Caddy HTTP server (an entry under apps/http/servers) that terminates ingress traffic and proxies it to upstreams (caddy get_routes)." ;
-    rdfs:subClassOf :Service .
+    rdfs:subClassOf core:Server .
 
 :Route a owl:Class ;
     rdfs:label "Route" ;
     rdfs:comment "An HTTP route of a Caddy server: its matchers and the handler that serves matching requests." ;
-    rdfs:subClassOf :ProxyRoute .
+    rdfs:subClassOf core:Route .
 
 
 :Upstream a owl:Class ;
     rdfs:label "Upstream" ;
     rdfs:comment "A backend target that a reverse_proxy handler dials, with live health/load status (caddy get_reverse_proxy_upstreams)." ;
-    rdfs:subClassOf :Endpoint .
+    rdfs:subClassOf core:Interface .
 
 :CertificateAuthority a owl:Class ;
     rdfs:label "Certificate Authority" ;
     rdfs:comment "A Caddy PKI app CA that issues TLS certificates for served sites (caddy get_pki_ca)." ;
-    rdfs:subClassOf :Resource .
+    rdfs:subClassOf core:Resource .
 
 # --- links (owl:ObjectProperty) ---
 
@@ -64,7 +65,7 @@
 :managedBy a owl:ObjectProperty ;
     rdfs:label "managed by" ;
     rdfs:comment "Links a Caddy resource to the Person/Agent responsible for it." ;
-    rdfs:range :Person .
+    rdfs:range core:Person .
 
 # --- fields (owl:DatatypeProperty) ---
 
@@ -122,7 +123,7 @@
     rdfs:domain :Upstream ;
     rdfs:range xsd:boolean .
 
-<http://knuckles.team/kg/caddy> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/caddy> a owl:Ontology ;
     rdfs:label "Caddy Reverse-Proxy Ontology" ;
     rdfs:comment """Caddy ingress model — reverse-proxy servers, their HTTP routes,
     the upstream backends those routes dial, and the PKI certificate authorities that

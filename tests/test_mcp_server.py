@@ -13,7 +13,7 @@ def test_mcp_server_security_context():
 
 
 def _served_tools():
-    from scion_sdk._connector_serve import build_server
+    from scion_sdk.connector import build_server
 
     mcp = build_server("caddy_mcp", command_args=[])[1]
     return {t.name: t for t in asyncio.run(mcp.list_tools())}

@@ -1,4 +1,4 @@
-"""Epistemic-graph typed-node ingestion -- Wire-First coverage for caddy-mcp.
+"""Medulla typed-node ingestion -- Wire-First coverage for caddy-mcp.
 
 Exercises the real ``ingest_entities`` / ``ingest_upstreams`` / ``ingest_servers`` seam
 against a fake ``scion_sdk.ingest`` transport (no engine required). The real

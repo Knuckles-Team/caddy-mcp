@@ -102,7 +102,7 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 ### Knowledge-graph database (`medulla`)
 
 Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
-Agent Utilities core dependency (`medulla`). The `[mcp]` extra keeps
+Meristem core dependency (`medulla`). The `[mcp]` extra keeps
 the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
 **medulla as a dedicated database service** and configure the runtime to use it.
@@ -267,7 +267,7 @@ See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md)
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `caddy-mcp[mcp]` to add
-> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Agent Utilities core
+> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Meristem core
 > still carries `medulla`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
@@ -371,7 +371,7 @@ _Auto-generated from the code-read env surface (package vars) — do not edit._
 
 ## Architecture
 
-This package uses the standardized Agent-Utilities dynamic facade architecture:
+This package uses the standardized Meristem dynamic facade architecture:
 
 ```mermaid
 graph TD

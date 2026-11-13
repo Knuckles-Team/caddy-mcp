@@ -46,7 +46,7 @@ def upstream(monkeypatch):
 
 
 def _server(args):
-    from scion_sdk._connector_serve import build_server
+    from scion_sdk.connector import build_server
 
     return build_server("caddy_mcp", command_args=args)[1]
 
