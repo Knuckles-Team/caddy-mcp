@@ -1,7 +1,8 @@
+@prefix infra: <https://knuckles-team.github.io/ontology/infrastructure#> .
 @prefix ac: <https://knuckles-team.github.io/ontology/access#> .
 @prefix kg: <https://knuckles-team.github.io/ontology/connector/caddy#> .
 @prefix core: <https://knuckles-team.github.io/ontology/core#> .
-@prefix cd: <http://knuckles.team/kg/caddy-access#> .
+@prefix cd: <https://knuckles-team.github.io/ontology/connector/caddy/access#> .
 
 cd:routeAccess a ac:AccessContract ;
     ac:classIri core:Route ;
@@ -13,4 +14,4 @@ cd:routeAccess a ac:AccessContract ;
     ac:pagination "none" .
 
 cd:upstreamAddress a ac:PropertyBinding ;
-    ac:contract cd:routeAccess ; ac:property kg:upstreamAddress ; ac:field "address" .
+    ac:contract cd:routeAccess ; ac:property infra:upstreamAddress ; ac:field "address" .

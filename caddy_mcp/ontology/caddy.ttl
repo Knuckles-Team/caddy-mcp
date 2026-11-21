@@ -1,3 +1,4 @@
+@prefix infra: <https://knuckles-team.github.io/ontology/infrastructure#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -15,17 +16,6 @@
 
 # --- classes (owl:Class) ---
 
-:ReverseProxy a owl:Class ;
-    rdfs:label "Reverse Proxy" ;
-    rdfs:comment "A Caddy HTTP server (an entry under apps/http/servers) that terminates ingress traffic and proxies it to upstreams (caddy get_routes)." ;
-    rdfs:subClassOf core:Server .
-
-:Route a owl:Class ;
-    rdfs:label "Route" ;
-    rdfs:comment "An HTTP route of a Caddy server: its matchers and the handler that serves matching requests." ;
-    rdfs:subClassOf core:Route .
-
-
 :Upstream a owl:Class ;
     rdfs:label "Upstream" ;
     rdfs:comment "A backend target that a reverse_proxy handler dials, with live health/load status (caddy get_reverse_proxy_upstreams)." ;
@@ -41,25 +31,25 @@
 :hasRoute a owl:ObjectProperty ;
     rdfs:label "has route" ;
     rdfs:comment "Links a ReverseProxy server to an HTTP Route it serves." ;
-    rdfs:domain :ReverseProxy ;
-    rdfs:range :Route .
+    rdfs:domain infra:ReverseProxy ;
+    rdfs:range core:Route .
 
 :routesToUpstream a owl:ObjectProperty ;
     rdfs:label "routes to upstream" ;
     rdfs:comment "Links a Route (via its reverse_proxy handler) to an Upstream backend it dials." ;
-    rdfs:domain :Route ;
+    rdfs:domain core:Route ;
     rdfs:range :Upstream .
 
 :proxiesTo a owl:ObjectProperty ;
     rdfs:label "proxies to" ;
     rdfs:comment "Links a ReverseProxy directly to an Upstream backend it fronts." ;
-    rdfs:domain :ReverseProxy ;
+    rdfs:domain infra:ReverseProxy ;
     rdfs:range :Upstream .
 
 :securedBy a owl:ObjectProperty ;
     rdfs:label "secured by" ;
     rdfs:comment "Links a ReverseProxy to the CertificateAuthority that issues its TLS certificates." ;
-    rdfs:domain :ReverseProxy ;
+    rdfs:domain infra:ReverseProxy ;
     rdfs:range :CertificateAuthority .
 
 :managedBy a owl:ObjectProperty ;
@@ -72,43 +62,31 @@
 :listenAddress a owl:DatatypeProperty ;
     rdfs:label "listen address" ;
     rdfs:comment "A network address a ReverseProxy server binds (e.g. ':443')." ;
-    rdfs:domain :ReverseProxy ;
+    rdfs:domain infra:ReverseProxy ;
     rdfs:range xsd:string .
 
 :routeId a owl:DatatypeProperty ;
     rdfs:label "route id" ;
     rdfs:comment "The Caddy config @id tag (or positional index) identifying a Route." ;
-    rdfs:domain :Route ;
+    rdfs:domain core:Route ;
     rdfs:range xsd:string .
 
 :matchHost a owl:DatatypeProperty ;
     rdfs:label "match host" ;
     rdfs:comment "A host matcher on a Route (the domain it answers for)." ;
-    rdfs:domain :Route ;
+    rdfs:domain core:Route ;
     rdfs:range xsd:string .
 
 :matchPath a owl:DatatypeProperty ;
     rdfs:label "match path" ;
     rdfs:comment "A path matcher on a Route." ;
-    rdfs:domain :Route ;
+    rdfs:domain core:Route ;
     rdfs:range xsd:string .
 
 :handler a owl:DatatypeProperty ;
     rdfs:label "handler" ;
     rdfs:comment "The primary handler kind of a Route (e.g. reverse_proxy, static_response, file_server)." ;
-    rdfs:domain :Route ;
-    rdfs:range xsd:string .
-
-:routeHostname a owl:DatatypeProperty ;
-    rdfs:label "route hostname" ;
-    rdfs:comment "The host name a proxy route matches on." ;
-    rdfs:domain :Route ;
-    rdfs:range xsd:string .
-
-:upstreamAddress a owl:DatatypeProperty ;
-    rdfs:label "upstream address" ;
-    rdfs:comment "The dial address of an Upstream backend (host:port)." ;
-    rdfs:domain :Upstream ;
+    rdfs:domain core:Route ;
     rdfs:range xsd:string .
 
 :numRequests a owl:DatatypeProperty ;

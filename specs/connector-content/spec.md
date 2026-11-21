@@ -24,21 +24,25 @@ The `caddy-mcp` server serves its packaged skills, prompts and ontology to any c
 
 1. **Given** the connector is configured, **When** the behaviour of row `CONN-CADDY-MCP-CONNECTOR-CONTENT-R001` (default content) is exercised, **Then** `resources/list` includes `skill://` and `ontology://`; `prompts/list` includes each packaged prompt.
 2. **Given** the connector is configured, **When** the behaviour of row `CONN-CADDY-MCP-CONNECTOR-CONTENT-R002` (declare access contracts for the competency reads of caddy-mcp) is exercised, **Then** declare access contracts for the competency reads of caddy-mcp.
+3. **Given** the connector is configured, **When** the behaviour of row `CONN-CADDY-MCP-CONNECTOR-CONTENT-R003` (pack extends only the core ontology) is exercised, **Then** no core class or property is redeclared and no retired IRI base remains. Test: `tests/test_pack_extends_core.py::test_pack_declares_no_core_term`.
 
 ### Edge Cases
 
 - If `CONN-CADDY-MCP-CONNECTOR-CONTENT-R001` is not met, its proving test fails: default content.
 - If `CONN-CADDY-MCP-CONNECTOR-CONTENT-R002` is not met, its proving test fails: declare access contracts for the competency reads of caddy-mcp.
+- If `CONN-CADDY-MCP-CONNECTOR-CONTENT-R003` is not met, its proving test fails: pack extends only the core ontology.
 
 ## Requirements
 
 - **FR-001**: Default content. Rows: `CONN-CADDY-MCP-CONNECTOR-CONTENT-R001`.
 - **FR-002**: Declare access contracts for the competency reads of caddy-mcp. Rows: `CONN-CADDY-MCP-CONNECTOR-CONTENT-R002`.
+- **FR-003**: Pack extends only the core ontology. Rows: `CONN-CADDY-MCP-CONNECTOR-CONTENT-R003`.
 
 ## Success Criteria
 
 - **SC-001**: `resources/list` includes `skill://` and `ontology://`; `prompts/list` includes each packaged prompt. Rows: `CONN-CADDY-MCP-CONNECTOR-CONTENT-R001`.
 - **SC-002**: Declare access contracts for the competency reads of caddy-mcp. Rows: `CONN-CADDY-MCP-CONNECTOR-CONTENT-R002`.
+- **SC-003**: No pack term redeclares a core term and no retired IRI base remains. Rows: `CONN-CADDY-MCP-CONNECTOR-CONTENT-R003`.
 
 ## Assumptions
 
@@ -51,3 +55,4 @@ The `caddy-mcp` server serves its packaged skills, prompts and ontology to any c
 |---|---|---|---|---|
 | FR-001 | `CONN-CADDY-MCP-CONNECTOR-CONTENT-R001` | [plan.md](plan.md) | T-001 | [test-spec.md](test-spec.md) |
 | FR-002 | `CONN-CADDY-MCP-CONNECTOR-CONTENT-R002` | [plan.md](plan.md) | T-002 | [test-spec.md](test-spec.md) |
+| FR-003 | `CONN-CADDY-MCP-CONNECTOR-CONTENT-R003` | [plan.md](plan.md) | T-002 | [test-spec.md](test-spec.md) |
