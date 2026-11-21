@@ -42,4 +42,9 @@ def test_competency_contracts_certified():
     assert contract.key_field in rows[0]
     ontology = (ROOT / "caddy_mcp/ontology/caddy.ttl").read_text()
     for prop, _ in contract.predicates:
-        assert f":{prop.rsplit('#', 1)[-1]} a owl:DatatypeProperty" in ontology
+        if prop.startswith("https://knuckles-team.github.io/ontology/connector/caddy#"):
+            assert f":{prop.rsplit('#', 1)[-1]} a owl:DatatypeProperty" in ontology
+        else:
+            # A core property: referenced by its core IRI, never redeclared here.
+            assert prop.startswith("https://knuckles-team.github.io/ontology/")
+            assert f":{prop.rsplit('#', 1)[-1]} a owl:" not in ontology
