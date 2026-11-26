@@ -1,36 +1,40 @@
 # Caddy MCP
+## MCP
 
-[![Status](https://img.shields.io/badge/status-active-success)](https://github.com/genius-agents/caddy-mcp)
-[![Version](https://img.shields.io/badge/version-0.15.0-blue)](pyproject.toml)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+![PyPI - Version](https://img.shields.io/pypi/v/caddy-mcp)
+![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
+![PyPI - Downloads](https://img.shields.io/pypi/dd/caddy-mcp)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/caddy-mcp)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/caddy-mcp)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/caddy-mcp)
+![PyPI - License](https://img.shields.io/pypi/l/caddy-mcp)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/caddy-mcp)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/caddy-mcp)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/caddy-mcp)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/caddy-mcp)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/caddy-mcp)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/caddy-mcp)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/caddy-mcp)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/caddy-mcp)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/caddy-mcp)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/caddy-mcp)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/caddy-mcp)
 
-> **Documentation** — Installation, deployment, usage across the API, agent, and MCP
-> interfaces, and guidance for provisioning the Caddy backing server are maintained in
-> the [official documentation](https://knuckles-team.github.io/caddy-mcp/).
-
-Caddy Reverse Proxy administrative and configuration orchestrator. Built with the highest architectural standards, incorporating dynamic facades, custom API routing, and FastMCP tool decoration.
-
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Environment Variables](#environment-variables)
-- [MCP Tools](#mcp-tools)
-- [Architecture](#architecture)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+> **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
+> and A2A agent interfaces are maintained in the
+> [official documentation](https://knuckles-team.github.io/caddy-mcp/).
 
 ---
 
 ## Overview
 
+Caddy Reverse Proxy administrative and configuration orchestrator. Built with the highest architectural standards, incorporating dynamic facades, custom API routing, and FastMCP tool decoration.
+
 Caddy MCP provides a high-performance, model-optimized interface to Caddy capabilities. It isolates the model from underlying API transport complexity, ensuring safe, idempotent, and highly traceable system interactions.
 
 ---
 
-## Features
+## Key Features
 
 - **Dynamic Facade Orchestration**: Integrates multi-inheritance clients cleanly under a single facade.
 - **Battle-Tested Resilience**: Out-of-the-box credential authentication, connection polling, and request retry strategies.
@@ -39,7 +43,9 @@ Caddy MCP provides a high-performance, model-optimized interface to Caddy capabi
 
 ---
 
-## ⚙️ Dynamic Tool Selection & Visibility
+## MCP
+
+### Dynamic Tool Selection & Visibility
 
 This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows the operator to restrict the set of exposed tools to prevent blowing up the LLM's context window.
 
@@ -58,188 +64,7 @@ The operator can configure tool filtering via multiple input channels:
 
 When query strings or parameters are provided, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
 
-
----
-
-## Installation
-
-Pick the extra that matches what the operator want to run:
-
-| Extra | Installs | Use when |
-|-------|----------|----------|
-| `caddy-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `medulla`) | The operator only run the **MCP server** (smallest install / image) |
-| `caddy-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `medulla`) | The operator run the **integrated agent** |
-| `caddy-mcp[all]` | Everything (`mcp` + `agent`) | Development / both surfaces |
-
-```bash
-# Connector-focused MCP server (includes the shared graph engine)
-uv pip install "caddy-mcp[mcp]"
-
-# Agent runtime (adds model orchestration to the shared graph engine)
-uv pip install "caddy-mcp[agent]"
-
-# Everything (development)
-uv pip install "caddy-mcp[all]"      # or: python -m pip install "caddy-mcp[all]"
-```
-
-### Container images (`:mcp` vs `:agent`)
-
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
-
-| Image tag | Build target | Contents | Entrypoint |
-|-----------|--------------|----------|------------|
-| `example/caddy-mcp:mcp` | `--target mcp` | `caddy-mcp[mcp]` — **connector-focused**, includes `medulla`; no model-orchestration stack | `caddy-mcp` |
-| `example/caddy-mcp@sha256:<digest>` | `--target agent` (default) | `caddy-mcp[agent]` — **agent runtime**, model orchestration + `medulla` | `caddy-agent` |
-
-```bash
-docker build --target mcp   -t example/caddy-mcp:mcp    docker/   # connector-focused MCP server
-docker build --target agent -t example/caddy-mcp:agent-local docker/   # agent runtime
-```
-
-`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/agent.compose.yml` runs the
-agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
-
-### Knowledge-graph database (`medulla`)
-
-Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
-Meristem core dependency (`medulla`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` also enables model orchestration. Local
-deployments can use the bundled engine. For production or shared state, run
-**medulla as a dedicated database service** and configure the runtime to use it.
-Deployment recipes (single-node + Raft HA), connection configuration, and architecture
-diagrams are documented in the
-[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
-
----
-
-## Usage
-
-The operator can start the FastMCP server in stdio mode via Python module execution:
-
-```python
-import asyncio
-from caddy_mcp.mcp_server import get_mcp_instance
-
-async def main():
-    mcp = get_mcp_instance()
-    # Execute stdio loop or launch server
-    print("MCP Server ready.")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-For direct shell start, ran:
-
-```bash
-python -m caddy_mcp.mcp_server
-```
-
----
-
-## Environment Variables
-
-<!-- ENV-VARS-TABLE:START -->
-
-#### Package environment variables
-
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `CADDY_URL` | `http://localhost:2019` | Caddy Administration API URL endpoint |
-| `CADDY_TOKEN` | secret-injected | Optional bearer token if API is secured |
-| `CADDY_MCP_BASE_URL` | `http://localhost:2019` | Alternate Caddy Admin API URL (fallback when CADDY_URL is unset) |
-| `CADDY_MCP_USERNAME` | — | Basic-auth username for the Caddy Admin API |
-| `CADDY_MCP_PASSWORD` | secret-injected | Basic-auth password for the Caddy Admin API |
-| `CADDY_TLS_PROFILE` | — | Verify TLS certificates when calling the Caddy Admin API |
-| `CADDY_TLS_PROFILE_REF` | — |  |
-| `CONFIGTOOL` | `true` | Toggle the Caddy config / debug / PKI / reverse-proxy tools |
-| `KG_INGESTTOOL` | `true` | Toggle the SDK-registered graph topology ingestion tool |
-| `CADDY_MCP_AGENT_IMAGE` | — | Operator-approved immutable image@sha256 reference for the Compose service |
-
-#### Inherited scion-sdk variables (apply to every connector)
-
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
-| `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
-| `PORT` | `8000` | Bind port (HTTP transports) |
-| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
-| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
-| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
-| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `EUNOMIA_TYPE` | `none` | Authorization mode: `none` \| `embedded` \| `remote` |
-| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` | Embedded Eunomia policy file |
-| `EUNOMIA_REMOTE_URL` | — | Remote Eunomia authorization server URL |
-| `ENABLE_OTEL` | `False` | Enable OpenTelemetry export |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | — | OTLP collector endpoint |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
-| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
-| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
-| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
-| `DEBUG` | `False` | Verbose logging |
-| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
-| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | — | Operator-configured LLM provider for the agent |
-| `MODEL_ID` | — | Operator-configured model id for the agent |
-| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
-
-_10 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
-<!-- ENV-VARS-TABLE:END -->
-
-
-Every variable the server reads, grouped by purpose. A local template is provided inside
-[.env.example](.env.example) — copy it as `.env` and fill out the operator's specific service endpoint
-parameters before starting execution.
-
-### Connection & Credentials
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `CADDY_URL` | Caddy Administration API URL endpoint | `http://localhost:2019` |
-| `CADDY_TOKEN` | Optional bearer token if the Admin API is secured | — |
-
-### MCP server / transport
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `TRANSPORT` | `stdio`, `streamable-http`, or `sse` | `stdio` |
-| `HOST` | Bind host (HTTP transports) | `0.0.0.0` |
-| `PORT` | Bind port (HTTP transports) | `8000` |
-| `MCP_TOOL_MODE` | Tool surface: `condensed`, `verbose`, or `both` | `condensed` |
-| `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS` | Comma-separated tool allow/deny list | — |
-| `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS` | Comma-separated tag allow/deny list | — |
-| `DEBUG` | Verbose logging | `False` |
-| `PYTHONUNBUFFERED` | Unbuffered stdout (recommended in containers) | `1` |
-
-### Tool toggles
-Each action-routed tool can be disabled individually via its toggle env var (set to `false`).
-See the [MCP Tools](#mcp-tools) table above for the authoritative names.
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `CONFIGTOOL` | Toggle the Caddy config / debug / PKI / reverse-proxy tools | `True` |
-
-### Telemetry & governance
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ENABLE_OTEL` | Enable OpenTelemetry export | `True` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` / `OTEL_EXPORTER_OTLP_SECRET_KEY` | OTLP auth keys | — |
-| `OTEL_EXPORTER_OTLP_PROTOCOL` | OTLP protocol (e.g. `http/protobuf`) | — |
-| `EUNOMIA_TYPE` | Authorization mode: `none`, `embedded`, `remote` | `none` |
-| `EUNOMIA_POLICY_FILE` | Embedded policy file | `mcp_policies.json` |
-| `EUNOMIA_REMOTE_URL` | Remote Eunomia server URL | — |
-
-### Agent CLI (full `[agent]` runtime only)
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
-| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
-| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
-| `ENABLE_WEB_UI` | Serve the AG-UI web interface | `True` |
-
----
-
-## MCP Tools
+### MCP Tools
 
 The table below is auto-generated from the live server — do not edit by hand.
 
@@ -260,9 +85,7 @@ _5 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
 
----
-
-## MCP Configuration Examples
+### MCP Configuration Examples
 
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
@@ -369,6 +192,8 @@ does not emit an unauthenticated non-loopback listener.
 _Auto-generated from the code-read env surface (package vars) — do not edit._
 <!-- MCP-CONFIG-EXAMPLES:END -->
 
+---
+
 ## Architecture
 
 This package uses the standardized Meristem dynamic facade architecture:
@@ -419,12 +244,182 @@ the detailed transport contract.
   `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
-## Contributing
+---
 
-Please audit all code changes against the repository's contribution and review requirements, and run:
+## Environment Variables
+
+<!-- ENV-VARS-TABLE:START -->
+
+#### Package environment variables
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `CADDY_URL` | `http://localhost:2019` | Caddy Administration API URL endpoint |
+| `CADDY_TOKEN` | secret-injected | Optional bearer token if API is secured |
+| `CADDY_MCP_BASE_URL` | `http://localhost:2019` | Alternate Caddy Admin API URL (fallback when CADDY_URL is unset) |
+| `CADDY_MCP_USERNAME` | — | Basic-auth username for the Caddy Admin API |
+| `CADDY_MCP_PASSWORD` | secret-injected | Basic-auth password for the Caddy Admin API |
+| `CADDY_TLS_PROFILE` | — | Verify TLS certificates when calling the Caddy Admin API |
+| `CADDY_TLS_PROFILE_REF` | — |  |
+| `CONFIGTOOL` | `true` | Toggle the Caddy config / debug / PKI / reverse-proxy tools |
+| `KG_INGESTTOOL` | `true` | Toggle the SDK-registered graph topology ingestion tool |
+| `CADDY_MCP_AGENT_IMAGE` | — | Operator-approved immutable image@sha256 reference for the Compose service |
+
+#### Inherited scion-sdk variables (apply to every connector)
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
+| `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
+| `PORT` | `8000` | Bind port (HTTP transports) |
+| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
+| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
+| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
+| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
+| `EUNOMIA_TYPE` | `none` | Authorization mode: `none` \| `embedded` \| `remote` |
+| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` | Embedded Eunomia policy file |
+| `EUNOMIA_REMOTE_URL` | — | Remote Eunomia authorization server URL |
+| `ENABLE_OTEL` | `False` | Enable OpenTelemetry export |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | — | OTLP collector endpoint |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
+| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
+| `DEBUG` | `False` | Verbose logging |
+| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
+| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
+| `PROVIDER` | — | Operator-configured LLM provider for the agent |
+| `MODEL_ID` | — | Operator-configured model id for the agent |
+| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
+
+_10 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
+<!-- ENV-VARS-TABLE:END -->
+
+
+Every variable the server reads, grouped by purpose. A local template is provided inside
+[.env.example](.env.example) — copy it as `.env` and fill out the operator's specific service endpoint
+parameters before starting execution.
+
+### Connection & Credentials
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CADDY_URL` | Caddy Administration API URL endpoint | `http://localhost:2019` |
+| `CADDY_TOKEN` | Optional bearer token if the Admin API is secured | — |
+
+### MCP server / transport
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `TRANSPORT` | `stdio`, `streamable-http`, or `sse` | `stdio` |
+| `HOST` | Bind host (HTTP transports) | `0.0.0.0` |
+| `PORT` | Bind port (HTTP transports) | `8000` |
+| `MCP_TOOL_MODE` | Tool surface: `condensed`, `verbose`, or `both` | `condensed` |
+| `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS` | Comma-separated tool allow/deny list | — |
+| `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS` | Comma-separated tag allow/deny list | — |
+| `DEBUG` | Verbose logging | `False` |
+| `PYTHONUNBUFFERED` | Unbuffered stdout (recommended in containers) | `1` |
+
+### Tool toggles
+Each action-routed tool can be disabled individually via its toggle env var (set to `false`).
+See the [MCP Tools](#mcp-tools) table above for the authoritative names.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CONFIGTOOL` | Toggle the Caddy config / debug / PKI / reverse-proxy tools | `True` |
+
+### Telemetry & governance
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ENABLE_OTEL` | Enable OpenTelemetry export | `True` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` / `OTEL_EXPORTER_OTLP_SECRET_KEY` | OTLP auth keys | — |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | OTLP protocol (e.g. `http/protobuf`) | — |
+| `EUNOMIA_TYPE` | Authorization mode: `none`, `embedded`, `remote` | `none` |
+| `EUNOMIA_POLICY_FILE` | Embedded policy file | `mcp_policies.json` |
+| `EUNOMIA_REMOTE_URL` | Remote Eunomia server URL | — |
+
+### Agent CLI (full `[agent]` runtime only)
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
+| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
+| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
+| `ENABLE_WEB_UI` | Serve the AG-UI web interface | `True` |
+
+---
+
+## Installation
+
+Pick the extra that matches what the operator want to run:
+
+| Extra | Installs | Use when |
+|-------|----------|----------|
+| `caddy-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `medulla`) | The operator only run the **MCP server** (smallest install / image) |
+| `caddy-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `medulla`) | The operator run the **integrated agent** |
+| `caddy-mcp[all]` | Everything (`mcp` + `agent`) | Development / both surfaces |
 
 ```bash
-pre-commit run --all-files
+# Connector-focused MCP server (includes the shared graph engine)
+uv pip install "caddy-mcp[mcp]"
+
+# Agent runtime (adds model orchestration to the shared graph engine)
+uv pip install "caddy-mcp[agent]"
+
+# Everything (development)
+uv pip install "caddy-mcp[all]"      # or: python -m pip install "caddy-mcp[all]"
+```
+
+### Container images (`:mcp` vs `:agent`)
+
+One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+
+| Image tag | Build target | Contents | Entrypoint |
+|-----------|--------------|----------|------------|
+| `example/caddy-mcp:mcp` | `--target mcp` | `caddy-mcp[mcp]` — **connector-focused**, includes `medulla`; no model-orchestration stack | `caddy-mcp` |
+| `example/caddy-mcp@sha256:<digest>` | `--target agent` (default) | `caddy-mcp[agent]` — **agent runtime**, model orchestration + `medulla` | `caddy-agent` |
+
+```bash
+docker build --target mcp   -t example/caddy-mcp:mcp    docker/   # connector-focused MCP server
+docker build --target agent -t example/caddy-mcp:agent-local docker/   # agent runtime
+```
+
+`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/agent.compose.yml` runs the
+agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
+
+### Knowledge-graph database (`medulla`)
+
+Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
+Meristem core dependency (`medulla`). The `[mcp]` extra keeps
+the server connector-focused; `[agent]` also enables model orchestration. Local
+deployments can use the bundled engine. For production or shared state, run
+**medulla as a dedicated database service** and configure the runtime to use it.
+Deployment recipes (single-node + Raft HA), connection configuration, and architecture
+diagrams are documented in the
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
+
+---
+
+## Usage
+
+The operator can start the FastMCP server in stdio mode via Python module execution:
+
+```python
+import asyncio
+from caddy_mcp.mcp_server import get_mcp_instance
+
+async def main():
+    mcp = get_mcp_instance()
+    # Execute stdio loop or launch server
+    print("MCP Server ready.")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+For direct shell start, ran:
+
+```bash
+python -m caddy_mcp.mcp_server
 ```
 
 ---
@@ -446,10 +441,30 @@ recommended reference for installation, deployment, and day-to-day operation.
 
 `AGENTS.md` is the canonical contributor/agent guidance.
 
+---
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete details.
 
+---
+
+## Repository Owners
+
+<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=example&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
+
+![GitHub followers](https://img.shields.io/github/followers/example)
+![GitHub User's stars](https://img.shields.io/github/stars/example)
+
+---
+
+## Contribute
+
+Please audit all code changes against the repository's contribution and review requirements, and run:
+
+```bash
+pre-commit run --all-files
+```
 
 <!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
